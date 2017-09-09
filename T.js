@@ -73,7 +73,7 @@ function match (matchLiteral) {
   return Object.freeze(composit)
 }
 
-// Types might proove too great a seduction to end up in harmful thought patterns
+// Types might prove too great a seduction to end up in harmful thought patterns
 // function type (composePattern, composeFn) {
 //   const typeSymbol = Symbol()
 //   const immutableType = literal => Object.freeze(Object.assign(
@@ -158,5 +158,5 @@ function composeContext () {
 
 module.exports = Object.freeze(
   Object.assign(
-    { match, composeError, raise },
+    { match, composeError, raise }, // TODO: remove composeError
     composeContext()))

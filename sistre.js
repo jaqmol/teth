@@ -2,7 +2,27 @@
 /* SISTRE is teth's [S]ingle [I]mmutable [S]tate [TRE]e */
 
 const objectPath = require('object-path')
-const { circular } = require('./conduit')
+const { circular } = require('./T')
+
+const sistre = (() => {
+  const allStateTrees = {}
+  function init () {
+    const name = arguments.length === 2 ? arguments[0] : 'main'
+    const initialState = arguments.length === 2 ? arguments[1] : arguments[0]
+    if (!initialState) throw new Error('Initial state is missing')
+    const st = composeSistreMiddleware(initialState)
+    allStateTrees[name] = st
+    return st
+  }
+  function get () {
+    return allStateTrees[!arguments.length ? 'main' : arguments[0]]
+  }
+  const didChangeMessage = Object.freeze({
+    role: 'state-tree',
+    event: 'did-change'
+  })
+  return Object.freeze({ init, get, didChangeMessage })
+})()
 
 function composeSistreMiddleware (initialStateTree) {
   const stateTree = initialStateTree
@@ -32,7 +52,7 @@ function composeSistreMiddleware (initialStateTree) {
           .map(({ keypath, change }) => setValue(keypath, change))
         if (changedKeypaths.length) {
           circular(Object.assign({},
-            composeSistreMiddleware.didChangeMessage,
+            sistre.didChangeMessage,
             { changedKeypaths }
           ))
         }
@@ -41,9 +61,5 @@ function composeSistreMiddleware (initialStateTree) {
     }
   }
 }
-composeSistreMiddleware.didChangeMessage = Object.freeze({
-  role: 'state-tree',
-  event: 'did-change'
-})
 
-module.exports = composeSistreMiddleware
+module.exports = sistre

@@ -2,7 +2,7 @@
 /* RESONATE PRODUCTION implementation provides concurrency */
 
 const auid = require('./auid')
-const { context, raise, send, circular, _resonator } = require('./conduit')
+const { context, raise, send, circular, _resonator } = require('./T')
 const allRunningWorkers = []
 const allThisSideStates = {}
 const allOtherSideTransports = {}

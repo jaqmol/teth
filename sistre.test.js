@@ -1,7 +1,7 @@
 /* Copyright 2017 Ronny Reichmann */
 /* global test expect */
 
-const { context, define } = require('./conduit')
+const { context, define } = require('./T')
 const sistre = require('./sistre')
 const pipe = require('./pipe')
 

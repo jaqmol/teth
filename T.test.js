@@ -1,7 +1,7 @@
 /* Copyright 2017 Ronny Reichmann */
 /* global test expect */
 
-const { match, context } = require('./conduit') // { match, context, type }
+const { match, context } = require('./T') // { match, context, type }
 const jsonic = require('jsonic')
 
 test('matcher inline', () => {

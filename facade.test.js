@@ -1,7 +1,7 @@
 /* Copyright 2017 Ronny Reichmann */
 /* global test expect */
 
-// const { send, define } = require('./conduit')
+// const { send, define } = require('./T')
 // const sistre = require('./sistre')
 // const facade = require('./facade')
 //

@@ -1,6 +1,6 @@
 {
   "name": "teth",
-  "version": "0.8.1",
+  "version": "0.8.2",
   "description": "Functional, reactive, pattern matching based, single immutable state tree, pure and clean open source JS lib.",
   "main": "index.js",
   "bin": {
@@ -11,9 +11,9 @@
     "doc": "jsdoc *.js -d reference",
     "test-resonate": "node bundle.js ./resonate.test-main.js --out ./build-test"
   },
-  "repository" : {
-    "type" : "git",
-    "url" : "https://github.com/jaqmol/teth.git"
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jaqmol/teth.git"
   },
   "keywords": [
     "functional",
@@ -35,6 +35,7 @@
     "reload": "^2.2.1",
     "rimraf": "^2.6.1",
     "snabbdom": "^0.6.9",
+    "teth-pipe": "^1.0.2",
     "uglify-es": "^3.0.27"
   },
   "devDependencies": {

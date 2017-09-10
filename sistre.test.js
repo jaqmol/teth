@@ -9,21 +9,21 @@ function createTestState () {
   return {bicycles: {muscle: [13, 21, 35], electric: [39, 43, 97]}}
 }
 
-test('sistre change state', () => {
+test('sistre change main state', () => {
   const ctx = context()
-  const state = sistre(createTestState())
+  const state = sistre.init(createTestState()) // main state
   const withMuscleState = state('bicycles.muscle')
   ctx.define('add: one, to: bicycles.muscle',
     withMuscleState,
     (msg, muscle, patch) => patch(muscle.concat([73])))
-  define(sistre.didChangeMessage,
+  define(sistre.didChangePattern,
     withMuscleState,
     (msg, muscle) => expect(muscle).toEqual([ 13, 21, 35, 73 ]))
   ctx.send('add: one, to: bicycles.muscle')
 })
-test('sistre pass through', done => {
+test('sistre pass through discrete state', done => {
   const ctx = context()
-  const state = sistre(createTestState())
+  const state = sistre.init('beta-state', createTestState())
   const withBothSubStates = state('bicycles.muscle', 'bicycles.electric')
   ctx.define('start: processing',
     withBothSubStates,

@@ -10,22 +10,23 @@ const sistre = (() => {
     const name = arguments.length === 2 ? arguments[0] : 'main'
     const initialState = arguments.length === 2 ? arguments[1] : arguments[0]
     if (!initialState) throw new Error('Initial state is missing')
-    const st = composeSistreMiddleware(initialState)
+    const st = composeSistreMiddleware(name, initialState)
     allStateTrees[name] = st
     return st
   }
   function get () {
     return allStateTrees[!arguments.length ? 'main' : arguments[0]]
   }
-  const didChangeMessage = Object.freeze({
+  const didChangePattern = Object.freeze({
     role: 'state-tree',
     event: 'did-change'
   })
-  return Object.freeze({ init, get, didChangeMessage })
+  return Object.freeze({ init, get, didChangePattern })
 })()
 
-function composeSistreMiddleware (initialStateTree) {
+function composeSistreMiddleware (name, initialStateTree) {
   const stateTree = initialStateTree
+  const circularPattern = Object.assign({ name }, sistre.didChangePattern)
   function getValue (keypath) {
     return objectPath.get(stateTree, keypath)
   }
@@ -33,28 +34,24 @@ function composeSistreMiddleware (initialStateTree) {
     objectPath.set(stateTree, keypath, value)
     return keypath
   }
-  return function withKeypaths (...allKeypaths) {
-    allKeypaths = allKeypaths.map(kp => kp.split('.'))
+  return function withKeypaths (...allStringKeypaths) {
+    const allKeypaths = allStringKeypaths.map(kp => kp.split('.'))
     return function middleware (message, next) {
       const originals = allKeypaths.map(getValue)
       const patch = (...changes) => {
         if (changes.length !== originals.length) {
-          const stringKeypaths = allKeypaths.map(kp => kp.join('.'))
-          throw new Error(`Returned array must contain ${originals.length} value(s) for key path(s) ${stringKeypaths}`)
+          throw new Error(`Returned array must contain ${originals.length} value(s) for key path(s) ${allStringKeypaths}`)
         }
-        const changedKeypaths = allKeypaths
+        const keypaths = allKeypaths
           .map((kp, idx) => ({
-            keypath: kp,
+            path: kp,
             original: originals[idx],
             change: changes[idx]
           }))
           .filter(({ original, change }) => original !== change)
-          .map(({ keypath, change }) => setValue(keypath, change))
-        if (changedKeypaths.length) {
-          circular(Object.assign({},
-            sistre.didChangeMessage,
-            { changedKeypaths }
-          ))
+          .map(({ path, change }) => setValue(path, change))
+        if (keypaths.length) {
+          circular(Object.assign({ keypaths }, circularPattern))
         }
       }
       return next(message, ...originals, patch)

@@ -1,6 +1,6 @@
 {
   "name": "teth",
-  "version": "0.8.2",
+  "version": "0.8.4",
   "description": "Functional, reactive, pattern matching based, single immutable state tree, pure and clean open source JS lib.",
   "main": "index.js",
   "bin": {

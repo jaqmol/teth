@@ -158,6 +158,101 @@ rootCtx.circular(/* ... */)
 - Discrete computation contexts are the means to separate components and services from each other.
 - The root context forms the backbone communication channel between components and services.
 
+## sistre
+
+Single immutable state tree expressed as **T** middleware.
+
+``` javascript
+// Init single immutable state tree
+const state = sistre.init({
+  bicycles: {
+    muscle: [13, 21, 35],
+    electric: [39, 43, 97]
+  }
+})
+// Define intent of state change in T function definition
+define('add: one, to: bicycles.muscle',
+  state('bicycles.muscle'), // state change intent for keypath "bicycles.muscle"
+  (msg, muscle, patch) => { //
+    patch(muscle.concat([73]))
+  })
+send('add: one, to: bicycles.muscle')
+```
+
+`sistre.init(<initial-state>) -> <state-fn>` initialize the single immutable state tree function.
+
+- `<initial-state>` is an object literal representing the full initial state of the complete application.
+
+`stateFn(<key-path-a>, <key-path-b>, ...)` create **T** middleware that adds data models to call arguments of handler function.
+
+- `<key-path-a>, <key-path-b>, ...` one or many key paths, which resolve to data models, which will be added to call arguments of handler function. The handler function will be called with:
+  1. the original `<message>` that was sent
+  2. all data models requested by the key-paths
+  3. a `<patch>` function that takes changed data models in the same order and count as requested key-paths. Calling it is optional.
+
+A middleware can be reused throughout several **T** function definitions:
+
+``` javascript
+const muscleModels = state('bicycles.muscle')
+const electricModels = state('bicycles.electric')
+
+define('add: one, to: muscle-bicycles', muscleModels,
+  (msg, musclePoweredBikes, patch) => { /* ... */ })
+
+define('remove: one, from: muscle-bicycles', muscleModels,
+  (msg, musclePoweredBikes, patch) => { /* ... */ })
+
+define('add: one, to: electric-bicycles', electricModels,
+  (msg, electricPoweredBikes, patch) => { /* ... */ })
+
+define('remove: one, from: electric-bicycles', electricModels,
+  (msg, electricPoweredBikes, patch) => { /* ... */ })
+```
+
+#### conceptual discussion
+
+Expressing the intent of state change is enforced and stated clearly at a dominant position in function definition.
+
+This forms optimal conditions for high maintainability, test-driven design and development, as well as separation of concern and continuous refactoring. In contrast to the mainstream approach towards object orientation.
+
+## pipe
+
+Merging promises with functional reactive map/reduce (+ debounce and throttle). Pipes can be used in backends as well.
+
+``` javascript
+// ...
+const readFile = pipe.wrap(fs.readFile)
+const writeFile = pipe.wrap(fs.writeFile)
+// ...
+readFile('./package.json', 'utf8')
+  .then(packString => JSON.parse(packString))
+  .then(pack => pipe((resolve, reject) => {
+    const keys = Object.keys(allScripts)
+    return next => {
+      if (keys.length) next(keys.splice(0, 1)[0])
+      else resolve()
+    }
+  }))
+  .filter(lit => !lit.pack.scripts[lit.key])
+  .map(lit => {
+    lit.pack.scripts[lit.key] = lit.value
+    return lit.pack
+  })
+  .reduce((r, i) => i)
+  .then(pack => JSON.stringify(pack, null, 2))
+  .then(packString => writeFile('./package.json', packString))
+  .then(() => { /* ... */ })
+  .catch(console.error)
+```
+
+## HTML
+
+**TODO: finish description**
+
+## facade
+
+Functional reactive HTML without writing HTML. **TODO: finish description**
+
 ### match(...)
 
 The pattern matching facility on top of which `define(...)`, `send(...)`, `circular(...)` and `context(...)` are built. It can be used as an alternative for conditionals.
@@ -197,99 +292,6 @@ matcher.do('role: provoker, cmd: should-throw')
 ```
 
 ... error handling is done by attaching an unknown-handler.
-
-## pipe
-
-Merging promises with functional reactive map/reduce (+ debounce and throttle). Pipes can be used in backends as well.
-
-``` javascript
-// ...
-const readFile = pipe.wrap(fs.readFile)
-const writeFile = pipe.wrap(fs.writeFile)
-// ...
-readFile('./package.json', 'utf8')
-  .then(packString => JSON.parse(packString))
-  .then(pack => pipe((resolve, reject) => {
-    const keys = Object.keys(allScripts)
-    return next => {
-      if (keys.length) next(keys.splice(0, 1)[0])
-      else resolve()
-    }
-  }))
-  .filter(lit => !lit.pack.scripts[lit.key])
-  .map(lit => {
-    lit.pack.scripts[lit.key] = lit.value
-    return lit.pack
-  })
-  .reduce((r, i) => i)
-  .then(pack => JSON.stringify(pack, null, 2))
-  .then(packString => writeFile('./package.json', packString))
-  .then(() => { /* ... */ })
-  .catch(console.error)
-```
-
-## sistre
-
-Single immutable state tree expressed as **T** middleware.
-
-``` javascript
-// Init single immutable state tree
-const state = sistre.init({
-  bicycles: {
-    muscle: [13, 21, 35],
-    electric: [39, 43, 97]
-  }
-})
-// Define intent of state change in T function definition
-define('add: one, to: bicycles.muscle',
-  state('bicycles.muscle'), // state change intent for keypath "bicycles.muscle"
-  (msg, muscle, patch) => { //
-    patch(muscle.concat([73]))
-  })
-send('add: one, to: bicycles.muscle')
-```
-
-`sistre.init(<initial-state>) -> <state-fn>` initialize the single immutable state tree function.
-
-- `<initial-state>` is an object literal representing the full initial state of the complete application.
-
-`stateFn(<key-path-a>, <key-path-b>, ...)` create **T** middleware that adds data models to call arguments of handler function.
-
-- `<key-path-a>, <key-path-b>, ...` one or many key paths, which resolve to data models, which will be added to call arguments of handler function. The handler function will be called with:
-  1. the original `<message>` that was sent
-  2. all data models requested by the key-paths
-  3. a `<patch>` function that takes changed data models in the same order and count as requested key-paths. Calling it is optional.
-
-``` javascript
-const muscleModels = state('bicycles.muscle')
-const electricModels = state('bicycles.electric')
-
-define('add: one, to: muscle-bicycles', muscleModels,
-  (msg, musclePoweredBikes, patch) => { /* ... */ })
-
-define('remove: one, from: muscle-bicycles', muscleModels,
-  (msg, musclePoweredBikes, patch) => { /* ... */ })
-
-define('add: one, to: electric-bicycles', electricModels,
-  (msg, electricPoweredBikes, patch) => { /* ... */ })
-
-define('remove: one, from: electric-bicycles', electricModels,
-  (msg, electricPoweredBikes, patch) => { /* ... */ })
-```
-
-#### conceptual discussion
-
-Expressing the intent of state change is enforced and stated clearly at a dominant position in function definition.
-
-This forms optimal conditions for high maintainability, test-driven design and development, as well as separation of concern and continuous refactoring. In contrast to the mainstream approach towards object orientation.
-
-## HTML
-
-**TODO: finish description**
-
-## facade
-
-Functional reactive HTML without writing HTML. **TODO: finish description**
 
 ## Only possible with JavaScript™ ;)
 

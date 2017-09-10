@@ -245,7 +245,7 @@ define('add: one, to: bicycles.muscle',
   state('bicycles.muscle'), // state change intent for keypath "bicycles.muscle"
   (msg, muscle, patch) => { //
     patch(muscle.concat([73]))
-})
+  })
 send('add: one, to: bicycles.muscle')
 ```
 
@@ -259,6 +259,23 @@ send('add: one, to: bicycles.muscle')
   1. the original `<message>` that was sent
   2. all data models requested by the key-paths
   3. a `<patch>` function that takes changed data models in the same order and count as requested key-paths. Calling it is optional.
+
+``` javascript
+const muscleModels = state('bicycles.muscle')
+const electricModels = state('bicycles.electric')
+
+define('add: one, to: muscle-bicycles', muscleModels,
+  (msg, musclePoweredBikes, patch) => { /* ... */ })
+
+define('remove: one, from: muscle-bicycles', muscleModels,
+  (msg, musclePoweredBikes, patch) => { /* ... */ })
+
+define('add: one, to: electric-bicycles', electricModels,
+  (msg, electricPoweredBikes, patch) => { /* ... */ })
+
+define('remove: one, from: electric-bicycles', electricModels,
+  (msg, electricPoweredBikes, patch) => { /* ... */ })
+```
 
 #### conceptual discussion
 

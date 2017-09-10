@@ -2,7 +2,7 @@
     <desc>TethLogoSVG</desc>
     <defs></defs>
     <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" stroke-linecap="round">
-        <path d="M30.9999595,20 L30.9999595,24 C30.9999595,28.4183004 27.4110568,32.0000405 22.999919,32.0000405 L20,32.0000405" id="Rectangle-2" stroke="#9B9B9B" stroke-width="2" stroke-linejoin="round"></path>
+        <path d="M30.9999595,20 L30.9999595,24 C30.9999595,28.4183004 27.4110568,32.0000405 22.999919,32.0000405 L20,32.0000405 L30.9999595,20 Z" id="Rectangle-2" stroke="#BBBBBB" stroke-width="2" fill="#BBBBBB"></path>
         <path d="M11,17 L22.9999595,4.99995952 C27.4182599,4.99995952 31,8.58886219 31,13 L31,15 L15,32.0000405 L9.00004048,32.0000405 C4.58174013,32.0000405 1,28.4111378 1,24 L1,13 L10,4" id="Rectangle-2" stroke="#4A4A4A" stroke-width="2"></path>
         <polyline id="Path-3" stroke="#D0011B" stroke-width="2" points="6 1 13 1 13 8"></polyline>
         <polyline id="Path-3" stroke="#D0011B" stroke-width="2" transform="translate(11.500000, 16.500000) rotate(-180.000000) translate(-11.500000, -16.500000) " points="8 13 15 13 15 20"></polyline>

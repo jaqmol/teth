@@ -11,17 +11,17 @@ const sistre = (() => {
     if (!arguments.length) throw new Error('No initial state provided')
     else if (arguments.length === 1) return init('main', arguments[0])
     const name = arguments[0]
-    const initialState = arguments[1]
-    const tree = composeSistreMiddleware(name, initialState)
-    allStateTrees[name] = tree
-    return tree
+    const initialStateValue = arguments[1]
+    const state = composeSistreMiddleware(name, initialStateValue)
+    allStateTrees[name] = state
+    return state
   }
   function get () {
     if (!arguments.length) return get('main')
     return allStateTrees[arguments[0]]
   }
   const didChangePattern = Object.freeze({
-    role: 'state-tree',
+    type: 'state-tree',
     event: 'did-change'
   })
   return Object.freeze({ init, get, didChangePattern })
@@ -39,7 +39,6 @@ function composeSistreMiddleware (name, initialStateTree) {
     objectPath.set(stateTree, keypath, value)
     return keypath
   }
-  // Normal sistre state is immutable
   function state (...allStringKeypaths) {
     const allKeypaths = allStringKeypaths.map(kp => kp.split('.'))
     return function middleware (message, next) {
@@ -47,7 +46,6 @@ function composeSistreMiddleware (name, initialStateTree) {
       return next(message, ...originals)
     }
   }
-  // TODO: Test the new explicit mutation method
   state.mutate = function (...allStringKeypaths) {
     const allKeypaths = allStringKeypaths.map(kp => kp.split('.'))
     return function middleware (message, next) {

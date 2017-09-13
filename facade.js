@@ -28,12 +28,15 @@ function toSnabbdomVirtualDOM (state /* virtual element state */) {
   } else return state // string contents
 }
 
-function composeFacade (elementSelector, startRenderMessage, renderViewMessage) {
+function composeFacade (config) {
+  if (!config.selector) throw new Error('config.selector missing')
+  if (!config.startPattern) throw new Error('config.startPattern missing')
+  if (!config.renderPattern) throw new Error('config.renderPattern missing')
   let lastVirtualDOM
-  define(startRenderMessage, () => {
-    const virtualElement = send(renderViewMessage)
+  define(config.startPattern, () => {
+    const virtualElement = send.sync(config.renderPattern)
     const virtualDOM = toSnabbdomVirtualDOM(virtualElement._state())
-    const subject = lastVirtualDOM || document.querySelector(elementSelector)
+    const subject = lastVirtualDOM || document.querySelector(config.selector)
     snabbdomPatch(subject, virtualDOM)
     lastVirtualDOM = virtualDOM
   })

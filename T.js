@@ -132,6 +132,9 @@ function composeContext () {
       return pipe.reject(e)
     }
   }
+  composit.send.sync = msg => {
+    return contextMatcher.do(msg)
+  }
   composit.circular = msg => {
     try {
       return pipe.all(contextMatcher.doAll(msg))

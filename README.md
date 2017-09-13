@@ -173,8 +173,8 @@ const state = sistre.init({
 // Define intent of state change in T function definition
 define('add: one, to: bicycles.muscle',
   state('bicycles.muscle'), // state change intent for keypath "bicycles.muscle"
-  (msg, muscle, patch) => { //
-    patch(muscle.concat([73]))
+  (msg, muscle) => {
+    // ...
   })
 send('add: one, to: bicycles.muscle')
 ```
@@ -188,7 +188,6 @@ send('add: one, to: bicycles.muscle')
 - `<key-path-a>, <key-path-b>, ...` one or many key paths, which resolve to data models, which will be added to call arguments of handler function. The handler function will be called with:
   1. the original `<message>` that was sent
   2. all data models requested by the key-paths
-  3. a `<patch>` function that takes changed data models in the same order and count as requested key-paths. Calling it is optional.
 
 A middleware can be reused throughout several **T** function definitions:
 
@@ -197,17 +196,19 @@ const muscleModels = state('bicycles.muscle')
 const electricModels = state('bicycles.electric')
 
 define('add: one, to: muscle-bicycles', muscleModels,
-  (msg, musclePoweredBikes, patch) => { /* ... */ })
+  (msg, musclePoweredBikes) => { /* ... */ })
 
 define('remove: one, from: muscle-bicycles', muscleModels,
-  (msg, musclePoweredBikes, patch) => { /* ... */ })
+  (msg, musclePoweredBikes) => { /* ... */ })
 
 define('add: one, to: electric-bicycles', electricModels,
-  (msg, electricPoweredBikes, patch) => { /* ... */ })
+  (msg, electricPoweredBikes) => { /* ... */ })
 
 define('remove: one, from: electric-bicycles', electricModels,
-  (msg, electricPoweredBikes, patch) => { /* ... */ })
+  (msg, electricPoweredBikes) => { /* ... */ })
 ```
+
+`stateFn.mutate(<key-path-a>, <key-path-b>, ...) -> <changes-array>` TODO continue
 
 #### conceptual discussion
 

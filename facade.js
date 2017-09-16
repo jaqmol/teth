@@ -1,5 +1,5 @@
 /* Copyright 2017 Ronny Reichmann */
-/* SISTER is teth's Single Immutable State TREe */
+/* FACADE is teth's virtual DOM hub */
 
 const snabbdom = require('snabbdom')
 const snabbdomPatch = snabbdom.init([

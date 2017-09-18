@@ -1,5 +1,5 @@
 /* Copyright 2017 Ronny Reichmann */
-/* global test expect */
+/* global test */
 
 const path = require('path')
 const { resonate } = require('./resonate')

@@ -12,8 +12,10 @@ function composeCheckFn (compareFn, adjective) {
 
 function fuzzify (config) {
   const initializers = Object.keys(config)
-    .map(adjective => [config[adjective], adjective])
-    .map(([compareFn, adjective]) => composeCheckFn(compareFn, adjective))
+    .map(adjective => {
+      const compareFn = config[adjective]
+      return composeCheckFn(compareFn, adjective)
+    })
   initializers.reverse()
   return initializers.reduce((acc, initCheckFn) => initCheckFn(acc), v => v)
 }

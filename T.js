@@ -137,7 +137,11 @@ function composeContext () {
   }
   composit.circular = msg => {
     try {
-      return pipe.all(contextMatcher.doAll(msg))
+      return pipe.all(contextMatcher.doAll(msg)
+        .map(result => {
+          if (result && result.then && result.catch) return result
+          else return pipe.resolve(result)
+        }))
     } catch (e) {
       return pipe.reject(e)
     }

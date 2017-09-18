@@ -1,11 +1,8 @@
 {
   "name": "teth",
-  "version": "0.8.9",
+  "version": "0.9.0",
   "description": "Functional, reactive, pattern matching based, single immutable state tree, pure and clean open source JS lib.",
-  "main": "index.js",
-  "bin": {
-    "ti": "./ti.js"
-  },
+  "main": "init.js",
   "scripts": {
     "test": "jest --runInBand",
     "doc": "jsdoc *.js -d reference",
@@ -34,6 +31,7 @@
     "object-path": "^0.11.4",
     "reload": "^2.2.1",
     "rimraf": "^2.6.1",
+    "route-parser": "0.0.5",
     "snabbdom": "^0.6.9",
     "teth-pipe": "^1.0.2",
     "uglify-es": "^3.0.27"

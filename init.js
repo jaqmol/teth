@@ -1,14 +1,13 @@
-const auid = require('./auid')
+/* Copyright 2017 Ronny Reichmann */
+/* INIT Initialize a teth app. */
+
 const facade = require('./facade')
-const HTML = require('./HTML')
-const pipe = require('./pipe')
 const sistre = require('./sistre')
-const T = require('./T')
 
 function init (config) {
+  if (!config.renderPattern) throw new Error('config.renderPattern missing')
   if (!config.state) throw new Error('config.state missing')
   if (!config.selector) throw new Error('config.selector missing')
-  if (!config.renderPattern) throw new Error('config.renderPattern missing')
   config.startPattern = config.startPattern || sistre.didChangePattern
   sistre.init(config.state)
   facade({
@@ -18,4 +17,4 @@ function init (config) {
   })
 }
 
-module.exports = { auid, facade, HTML, init, pipe, sistre, T }
+module.exports = init

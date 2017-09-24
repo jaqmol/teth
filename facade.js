@@ -9,7 +9,7 @@ const snabbdomPatch = snabbdom.init([
   require('snabbdom/modules/style'),
   require('snabbdom/modules/eventlisteners')
 ])
-const h = require('snabbdom/h')
+const h = require('snabbdom/h').default
 const { send, define } = require('./T')
 
 function toSnabbdomVirtualDOM (state /* virtual element state */) {

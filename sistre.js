@@ -7,18 +7,20 @@ const pipe = require('./pipe')
 
 const sistre = (() => {
   const allStateTrees = {}
+  function get () {
+    if (!arguments.length) return get('main')
+    const name = arguments[0]
+    if (!allStateTrees[name]) allStateTrees[name] = composeSistreMiddleware(name)
+    return allStateTrees[name]
+  }
   function init () {
     if (!arguments.length) throw new Error('No initial state provided')
     else if (arguments.length === 1) return init('main', arguments[0])
     const name = arguments[0]
     const initialStateValue = arguments[1]
-    const state = composeSistreMiddleware(name, initialStateValue)
-    allStateTrees[name] = state
+    const state = get(name)
+    state.init(initialStateValue)
     return state
-  }
-  function get () {
-    if (!arguments.length) return get('main')
-    return allStateTrees[arguments[0]]
   }
   const didChangePattern = Object.freeze({
     type: 'state-tree',
@@ -27,8 +29,8 @@ const sistre = (() => {
   return Object.freeze({ init, get, didChangePattern })
 })()
 
-function composeSistreMiddleware (name, initialStateTree) {
-  const stateTree = initialStateTree
+function composeSistreMiddleware (name) {
+  let stateTree
   const circularPattern = Object.assign({ name }, sistre.didChangePattern)
   let openMutations = 0
   let mutationsCount = 0
@@ -45,6 +47,10 @@ function composeSistreMiddleware (name, initialStateTree) {
       const originals = allKeypaths.map(retrieveValue)
       return next(message, ...originals)
     }
+  }
+  state.init = function (initialStateTree) {
+    if (stateTree) throw new Error('Multiple state tree initializations')
+    stateTree = initialStateTree
   }
   state.mutate = function (...allStringKeypaths) {
     const allKeypaths = allStringKeypaths.map(kp => kp.split('.'))

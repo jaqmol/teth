@@ -29,7 +29,7 @@ test('sistre change main state', done => {
 })
 test('sistre pass through discrete state', done => {
   const ctx = context()
-  const state = sistre.init('beta-state', createTestState())
+  const state = sistre.init('b-state', createTestState())
   const withBothSubStates = state('bicycles.muscle', 'bicycles.electric')
   ctx.define('start: processing',
     withBothSubStates,
@@ -51,7 +51,7 @@ test('sistre pass through discrete state', done => {
 })
 test('sistre pass through sync discrete state', () => {
   const ctx = context()
-  const state = sistre.init('beta-state', createTestState())
+  const state = sistre.init('c-state', createTestState())
   const withBothSubStates = state('bicycles.muscle', 'bicycles.electric')
   ctx.define('start: processing',
     withBothSubStates,

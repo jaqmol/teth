@@ -7,4 +7,5 @@ test('matcher inline', () => {
   const testAuidsArr = [...(new Array(999))].map(() => auid())
   const testAuidsSet = new Set(testAuidsArr)
   expect(testAuidsArr.length).toBe(testAuidsSet.size)
+  console.log(testAuidsArr)
 })

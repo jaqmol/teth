@@ -3,11 +3,11 @@
 
 const snabbdom = require('snabbdom')
 const snabbdomPatch = snabbdom.init([
-  require('snabbdom/modules/class'),
-  require('snabbdom/modules/attributes'),
-  require('snabbdom/modules/props'),
-  require('snabbdom/modules/style'),
-  require('snabbdom/modules/eventlisteners')
+  require('snabbdom/modules/class').default,
+  require('snabbdom/modules/attributes').default,
+  require('snabbdom/modules/props').default,
+  require('snabbdom/modules/style').default,
+  require('snabbdom/modules/eventlisteners').default
 ])
 const h = require('snabbdom/h').default
 const { send, define } = require('./T')

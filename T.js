@@ -115,40 +115,48 @@ function composeDefine (contextMatcher, contextComposit) {
   }
 }
 
-function composeContext () {
-  const contextMatcher = match()
-  const composit = {}
-  composit.define = composeDefine(contextMatcher, composit)
-  composit.unknown = callback => {
-    contextMatcher.unknown(callback)
-    return composit
-  }
-  composit.send = msg => {
-    try {
-      const result = contextMatcher.do(msg)
-      if (result && result.then && result.catch) return result
-      else return pipe.resolve(result)
-    } catch (e) {
-      return pipe.reject(e)
+const composeContext = (() => {
+  function createContext () {
+    const contextMatcher = match()
+    const composit = {}
+    composit.define = composeDefine(contextMatcher, composit)
+    composit.unknown = callback => {
+      contextMatcher.unknown(callback)
+      return composit
     }
-  }
-  composit.send.sync = msg => {
-    return contextMatcher.do(msg)
-  }
-  composit.circular = msg => {
-    try {
-      return pipe.all(contextMatcher.doAll(msg)
-        .map(result => {
-          if (result && result.then && result.catch) return result
-          else return pipe.resolve(result)
-        }))
-    } catch (e) {
-      return pipe.reject(e)
+    composit.send = msg => {
+      try {
+        const result = contextMatcher.do(msg)
+        if (result && result.then && result.catch) return result
+        else return pipe.resolve(result)
+      } catch (e) {
+        return pipe.reject(e)
+      }
     }
+    composit.send.sync = msg => {
+      return contextMatcher.do(msg)
+    }
+    composit.circular = msg => {
+      try {
+        return pipe.all(contextMatcher.doAll(msg)
+          .map(result => {
+            if (result && result.then && result.catch) return result
+            else return pipe.resolve(result)
+          }))
+      } catch (e) {
+        return pipe.reject(e)
+      }
+    }
+    composit.context = createContext
+    return Object.freeze(composit)
   }
-  composit.context = composeContext
-  return Object.freeze(composit)
-}
+  const allNamedConexts = {}
+  createContext.get = name => {
+    if (!allNamedConexts[name]) allNamedConexts[name] = createContext()
+    return allNamedConexts[name]
+  }
+  return createContext
+})()
 
 // function resonateContext (ctx) {
 //   const composit = {}

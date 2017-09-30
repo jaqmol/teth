@@ -193,6 +193,13 @@ test('argument multiplier middleware', () => {
       expect(result).toEqual([ '!11', 'hi', 'there', '1337' ])
     })
 })
+test('create named contexts', () => {
+  const instanceA1 = context.get('instance-a')
+  const instanceA2 = context.get('instance-a')
+  expect(instanceA1).toBeDefined()
+  expect(instanceA2).toBeDefined()
+  expect(instanceA1).toBe(instanceA2)
+})
 // The usefulness of types needs to be discussed
 // test('type', () => {
 //   const Adder = type(

@@ -1,6 +1,6 @@
 {
   "name": "teth",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Functional, reactive, pattern matching based, centralized state tree, open source JS library.",
   "main": "init.js",
   "scripts": {

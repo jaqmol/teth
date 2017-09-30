@@ -4,9 +4,24 @@
 
 Frontend library for the browser: minimalist, functional, reactive, pattern matching, single immutable state tree. Teth-based applications are written in **T**, a JavaScript-DSL.
 
+## Why?
+
+Object-orientation and type correctness alone do not guarantee program correctness. Alternatives fail to make substantial contributions to fight complexity- and robustness-problems.
+
+> "Static Types Give You a False Sense of Security" — Eric Elliot, [The Shocking Secret About Static Types](https://medium.com/javascript-scene/the-shocking-secret-about-static-types-514d39bf30a3)
+
+> “Whilst not conclusive, the lack of evidence in the charts that more advanced type languages are going to save us from writing bugs is very disturbing.” — Daniel Lebrero, [The broken promise of static typing](https://labs.ig.com/static-typing-promise)
+
+`Teth` takes a different path by simplifying the complex and providing affordance to omit the potentially harmful:
+- Test Driven Development
+- Entry Conditions
+- State Changes Without Side-Effects
+
 ## T
 
-A functional domain specific language in JavaScript. A minimal set of enhancements concerning pattern matching and message passing. Business logic in T is express in functional style; data models, messages and entry conditions are expressed as object literals.
+A minimal functional set of enhancements to JavaScript forming a domain specific language: • pattern matching • message passing • asynchronicity • reactiveness.
+
+Code in T is expressed in functional style, messaging provides robustness, entry conditions minimize the need for conditionals and raise expressiveness.
 
 ##### compatible
 
@@ -32,9 +47,9 @@ define('key: Escape', event => {
 
 #### conceptual discussion
 
-**T** function definitions are based upon describing entry-conditions. Messaging further helps with behavioral decomposition of intent. When refactoring **T** code, and patterns and messages are adjusted, the function description automatically is on par with implementation.
+**T** function definitions describe entry-conditions. Messaging further helps with behavioral decomposition of intent. When refactoring **T** code, and patterns as well as messages are adjusted, function description automatically is on par with implementation.
 
-Using sister (see below) further strengthens expressiveness in intent.
+Using `cestre` (see below) further strengthens expressiveness in intent.
 
 ### send(...)
 
@@ -63,29 +78,9 @@ send({ key: event.key, value: event.target.value})
 
 ### message and pattern conventions
 
-``` javascript
-{
-  type: 'dsl',
-  cmd: 'use',
-  data: '01010100'
-}
-```
+Because T functions are defined with patterns (entry-conditions), messages should be composed concisely. It's important to choose a convention and stick to it throughout the application.
 
-Because T functions are defined with message-patterns (entry-conditions), messages should be composed following a convention. Here are 3 proposals:
-
-  - role-cmd:
-    - `role: <string>` describes the role which the message is associated with
-    - `cmd: <string>` describes what is supposed to happen upon reception reception
-  - type-action:
-    - `type: <string>` is the type of the message
-    - `action: <string>` describes what is supposed to happen upon reception
-  - type-cmd:
-    - `type: <string>` is the type of the message
-    - `cmd: <string>` describes what is supposed to happen upon reception
-  - The message can be extended by one or many `[data|payload|...: <data>]` that carry values or data models to be processed
-  - It's important to choose one convention and stick to it throughout the application.
-
-Patterns (entry-conditions) of T function definitions should contain the 2 main properties of the message convention. Here's an example of non-naive (non-tutorial) usage of patterns and message:
+Here's a non-naive example of patterns and message:
 
 ``` javascript
 import { define, send } from 'teth/T'

@@ -2,20 +2,20 @@
 /* global test expect */
 
 const { context, define } = require('./T')
-const sistre = require('./sistre')
+const cestre = require('./cestre')
 const pipe = require('./pipe')
 
 function createTestState () {
   return {bicycles: {muscle: [13, 21, 35], electric: [39, 43, 97]}}
 }
 
-test('sistre change main state', done => {
+test('cestre change main state', done => {
   const ctx = context()
-  const state = sistre.init(createTestState()) // main state
+  const state = cestre.init(createTestState()) // main state
   ctx.define('add: one, to: bicycles.muscle',
     state.mutate('bicycles.muscle'),
     (msg, muscle) => [ muscle.concat([73]) ])
-  define(sistre.didChangePattern,
+  define(cestre.didChangePattern,
     state('bicycles.muscle'),
     (msg, muscle) => {
       expect(muscle).toEqual([ 13, 21, 35, 73 ])
@@ -27,9 +27,9 @@ test('sistre change main state', done => {
       done()
     })
 })
-test('sistre pass through discrete state', done => {
+test('cestre pass through discrete state', done => {
   const ctx = context()
-  const state = sistre.init('b-state', createTestState())
+  const state = cestre.init('b-state', createTestState())
   const withBothSubStates = state('bicycles.muscle', 'bicycles.electric')
   ctx.define('start: processing',
     withBothSubStates,
@@ -49,9 +49,9 @@ test('sistre pass through discrete state', done => {
       done()
     })
 })
-test('sistre pass through sync discrete state', () => {
+test('cestre pass through sync discrete state', () => {
   const ctx = context()
-  const state = sistre.init('c-state', createTestState())
+  const state = cestre.init('c-state', createTestState())
   const withBothSubStates = state('bicycles.muscle', 'bicycles.electric')
   ctx.define('start: processing',
     withBothSubStates,

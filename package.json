@@ -1,7 +1,7 @@
 {
   "name": "teth",
-  "version": "0.9.7",
-  "description": "Functional, reactive, pattern matching based, single immutable state tree, pure and clean open source JS lib.",
+  "version": "0.9.8",
+  "description": "Functional, reactive, pattern matching based, centralized state tree, open source JS library.",
   "main": "init.js",
   "scripts": {
     "test": "jest --runInBand",

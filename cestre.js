@@ -1,16 +1,17 @@
 /* Copyright 2017 Ronny Reichmann */
-/* SISTRE is teth's [S]ingle [I]mmutable [S]tate [TRE]e */
+/* CESTRE is teth's [CE]ntralized [S]tate [TRE]e */
+/* Inspired by Flux and Redux */
 
 const objectPath = require('object-path')
 const { circular } = require('./T')
 const pipe = require('./pipe')
 
-const sistre = (() => {
+const cestre = (() => {
   const allStateTrees = {}
   function get () {
     if (!arguments.length) return get('main')
     const name = arguments[0]
-    if (!allStateTrees[name]) allStateTrees[name] = composeSistreMiddleware(name)
+    if (!allStateTrees[name]) allStateTrees[name] = composeCestreMiddleware(name)
     return allStateTrees[name]
   }
   function init () {
@@ -29,9 +30,9 @@ const sistre = (() => {
   return Object.freeze({ init, get, didChangePattern })
 })()
 
-function composeSistreMiddleware (name) {
+function composeCestreMiddleware (name) {
   let stateTree
-  const circularPattern = Object.assign({ name }, sistre.didChangePattern)
+  const circularPattern = Object.assign({ name }, cestre.didChangePattern)
   let openMutations = 0
   let mutationsCount = 0
   function retrieveValue (keypath) {
@@ -83,4 +84,4 @@ function composeSistreMiddleware (name) {
   return state
 }
 
-module.exports = sistre
+module.exports = cestre

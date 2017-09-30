@@ -2,7 +2,7 @@
 /* global test expect */
 
 // const { send, define } = require('./T')
-// const sistre = require('./sistre')
+// const cestre = require('./cestre')
 // const facade = require('./facade')
 //
 // function createTestState () {
@@ -12,13 +12,13 @@
 test('facade', () => {
   expect(true).toBe(true)
   // const ctx = context()
-  // const state = sistre(createTestState())
+  // const state = cestre(createTestState())
   // const renderer = facade()
   // const withMuscleState = state('bicycles.muscle')
   // ctx.define('add: one, to: bicycles.muscle',
   //   withMuscleState,
   //   (msg, muscle, patch) => patch(muscle.concat([73])))
-  // define(sistre.didChangeMessage,
+  // define(cestre.didChangeMessage,
   //   withMuscleState,
   //   (msg, muscle) => expect(muscle).toEqual([ 13, 21, 35, 73 ]))
   // ctx.send('add: one, to: bicycles.muscle')

@@ -158,13 +158,13 @@ rootCtx.circular(/* ... */)
 - Discrete computation contexts are the means to separate components and services from each other.
 - The root context forms the backbone communication channel between components and services.
 
-## sistre
+## cestre
 
 Single immutable state tree expressed as **T** middleware.
 
 ``` javascript
 // Init single immutable state tree
-const state = sistre.init({
+const state = cestre.init({
   bicycles: {
     muscle: [13, 21, 35],
     electric: [39, 43, 97]
@@ -179,7 +179,7 @@ define('add: one, to: bicycles.muscle',
 send('add: one, to: bicycles.muscle')
 ```
 
-`sistre.init(<initial-state>) -> <state-fn>` initialize the single immutable state tree function.
+`cestre.init(<initial-state>) -> <state-fn>` initialize the single immutable state tree function.
 
 - `<initial-state>` is an object literal representing the full initial state of the complete application.
 

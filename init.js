@@ -2,14 +2,14 @@
 /* INIT Initialize a teth app. */
 
 const facade = require('./facade')
-const sistre = require('./sistre')
+const cestre = require('./cestre')
 
 function init (config) {
   if (!config.renderPattern) throw new Error('config.renderPattern missing')
   if (!config.state) throw new Error('config.state missing')
   if (!config.selector) throw new Error('config.selector missing')
-  config.startPattern = config.startPattern || sistre.didChangePattern
-  sistre.init(config.state)
+  config.startPattern = config.startPattern || cestre.didChangePattern
+  cestre.init(config.state)
   facade({
     renderPattern: config.renderPattern,
     startPattern: config.startPattern,

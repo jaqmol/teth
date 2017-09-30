@@ -30,7 +30,7 @@ function route (description, pattern) {
         })
     }
   }
-  // addWindowEventListener('load', onChange)
+  addWindowEventListener('load', onChange)
   addWindowEventListener('hashchange', onChange)
   ctx.define(pattern, msg => {
     const location = windowLocation()

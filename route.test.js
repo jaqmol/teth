@@ -36,7 +36,7 @@ test('route without variables', done => {
   const patternShowAllItems = {type: 'route', cmd: 'show-all-items'}
   const patternSowActiveItems = {type: 'route', cmd: 'show-active-items'}
   const patternShowCompleteItems = {type: 'route', cmd: 'show-completed-items'}
-  const root = route('#', patternShowAllItems)
+  const root = route('/#', patternShowAllItems)
   root.route('/active', patternSowActiveItems)
   root.route('/completed', patternShowCompleteItems)
   let receptionCount = 0
@@ -55,9 +55,9 @@ test('route without variables', done => {
     receptionCount += 1
     if (receptionCount === 3) done()
   })
-  mockWindow.changeHrefAndFireHashChange(testOrigin + '#')
-  mockWindow.changeHrefAndFireHashChange(testOrigin + '#/active')
-  mockWindow.changeHrefAndFireHashChange(testOrigin + '#/completed')
+  mockWindow.changeHrefAndFireHashChange(testOrigin + '/#')
+  mockWindow.changeHrefAndFireHashChange(testOrigin + '/#/active')
+  mockWindow.changeHrefAndFireHashChange(testOrigin + '/#/completed')
 })
 
 test('route with variables', done => {
@@ -65,7 +65,7 @@ test('route with variables', done => {
   const patternShowRootItems = {type: 'route', cmd: 'show-root-items'}
   const patternActivateItem = {type: 'route', cmd: 'activate-item'}
   const patternCompleteItem = {type: 'route', cmd: 'complete-item'}
-  const root = route('#', patternShowRootItems)
+  const root = route('/#', patternShowRootItems)
   root.route('/activate/:itemId', patternActivateItem)
   root.route('/complete/:itemId', patternCompleteItem)
   let receptionCount = 0
@@ -84,15 +84,15 @@ test('route with variables', done => {
     receptionCount += 1
     if (receptionCount === 3) done()
   })
-  mockWindow.changeHrefAndFireHashChange(testOrigin + '#')
-  mockWindow.changeHrefAndFireHashChange(testOrigin + '#/activate/111')
-  mockWindow.changeHrefAndFireHashChange(testOrigin + '#/complete/222')
+  mockWindow.changeHrefAndFireHashChange(testOrigin + '/#')
+  mockWindow.changeHrefAndFireHashChange(testOrigin + '/#/activate/111')
+  mockWindow.changeHrefAndFireHashChange(testOrigin + '/#/complete/222')
 })
 
 test('route change with several listeners', done => {
   const mockWindow = replaceMockWindow()
   const listenerPattern = {type: 'route', cmd: 'inform-about'}
-  const root = route('#', 'type: ignored-route')
+  const root = route('/#', 'type: ignored-route')
   root.route('/inform/:itemId', listenerPattern)
   let factor = 1
   const value = 111
@@ -112,9 +112,9 @@ test('route change with several listeners', done => {
     receptionCount += 1
     if (receptionCount === 9) done()
   })
-  mockWindow.changeHrefAndFireHashChange(testOrigin + `#/inform/${factor * value}`)
+  mockWindow.changeHrefAndFireHashChange(testOrigin + `/#/inform/${factor * value}`)
   factor += 1
-  mockWindow.changeHrefAndFireHashChange(testOrigin + `#/inform/${factor * value}`)
+  mockWindow.changeHrefAndFireHashChange(testOrigin + `/#/inform/${factor * value}`)
   factor += 1
-  mockWindow.changeHrefAndFireHashChange(testOrigin + `#/inform/${factor * value}`)
+  mockWindow.changeHrefAndFireHashChange(testOrigin + `/#/inform/${factor * value}`)
 })

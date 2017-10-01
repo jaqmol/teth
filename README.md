@@ -29,7 +29,7 @@ Expressing everything as a (lazily named) class and scattering business logic th
 - [define(...) — Define T-Function](#define)
 - [send(...) — Invoke First Function Definition that Matches](#send)
 - [circular(...) — Invoke All Function Definitions that Match](#circular)
-- [context.get(...) — Get/Create Computation Context](#context-get)
+- [context.get(...) — Get/Create Computation Context](#contextget)
 - [init(...) — Init Teth App](#init)
 - [cestre — Centralised State Tree](#cestre)
 - [pipe — Promise compatible Map/Reduce with Backpressure](#pipe)

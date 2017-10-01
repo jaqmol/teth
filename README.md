@@ -193,18 +193,26 @@ init({
 
 Centralised state tree expressed as **T** middleware. Inspired by the concept of single immutable state trees.
 
+### initialise state tree
+
 ``` javascript
 // main.js
+
 // Init centralised state tree via cestre itself
+// NOT RECOMMENDED
 import cestre from 'teth/cestre'
+
 cestre.init({
   bicycles: {
     muscle: [13, 21, 35],
     electric: [39, 43, 97]
   }
 })
+
 // Or via teth/init
+// RECOMMENDED
 import init from 'teth/init'
+
 init({
   ...
   state: {
@@ -215,9 +223,13 @@ init({
   },
   ...
 })
+```
+
+### retrieve and mutate state models
+
+``` javascript
 // component.fcd.js
-// Retrieve state function
-const state = cestre()
+const state = cestre.get()
 // Define interest in specific state in T function definition
 define('render: one, from: bicycles.muscle',
   state('bicycles.muscle'), // interest for state at keypath "bicycles.muscle"
@@ -225,7 +237,9 @@ define('render: one, from: bicycles.muscle',
     // ...
   })
 send('render: one, from: bicycles.muscle')
+
 // component.ctx.js
+const state = cestre.get()
 // Define intent to mutate state in T function definition
 define('add: one, to: bicycles.muscle',
   state.mutate('bicycles.muscle', 'bicycles.electric'), // intent to mutate states at specified keypaths
@@ -241,9 +255,13 @@ send('add: one, to: bicycles.muscle')
 
 - `<initial-state>` is an object literal representing the full initial state of the complete application.
 
+`cestre.get() -> <stateFn>` get the state function of the centralised state tree.
+
+- `<stateFn>` The state function allows to express interest to retrieve or mutate a state model ...
+
 `stateFn(<key-path-a>, <key-path-b>, ...)` create **T** middleware that hands over the state specified by the provided keypaths.
 
-- `<key-path-a>, <key-path-b>, ...` one or many key paths, which resolve to models inside the state tree. The handler function will be called with:
+- `<key-path-a>, <key-path-b>, ...` one or many key paths, which resolve to models inside the state tree. The handler of the function definition will be called with:
   1. the original `<message>` as the first argument
   2. all state models as following arguments
 
@@ -331,6 +349,70 @@ readFile('./package.json', 'utf8')
   .then(() => { /* ... */ })
   .catch(console.error)
 ```
+
+### creating pipes with deferrer and generator
+
+`pipe(<deferrerFn>) -> <generatorFn>` creates a pipe.
+
+- `<deferrerFn>` is a callback that will be called with 2 arguments: `<resolveFn>` and `<rejectFn>`.
+- Behaves like it's Promise counterpart.
+
+`<generatorFn>` can be returned from the `<deferrerFn>`.
+
+- Will be called repeatedly with a `<nextFn>` until `<deferrerFn>` resolved or rejected.
+- Every `<nextFn>` must be called only once with a value each time `<generatorFn>` is called.
+- So that values are emitted as fast as subsequent consumption is performed.
+- Example of a generator emitting keys of an object literal as fast as subsequent consumers can process:
+
+  ``` javascript
+  pipe((resolve, reject) => {
+    const keys = Object.keys(anObjectLiteral)
+    return next => {
+      if (keys.length) next(keys.splice(0, 1)[0])
+      else resolve()
+    }
+  })
+  ```
+
+### operators
+
+`.map(<fn>) -> <pipe>` `.filter(<fn>) -> <pipe>` `.forEach(<fn>) -> <pipe>` `.reduce(<fn>) -> <pipe>` behave like their array counterparts.
+
+`.reduce(<fn>) -> <pipe>` the reduce result is retrieved by chaining a `then()`.
+
+`.then(<fn>) -> <pipe>` `.catch(<fn>)` behave like their Promise counterparts.
+
+`.debounce(<delay>) -> <pipe>` continues the stream of operations only after a firing silence of the previous operation of at least `<delay>` milliseconds.
+
+`.throttle(<delay>) -> <pipe>` limits the events coming from the previous operation to firing in the interval of the given `<delay>`.
+
+### constructor functions
+
+`pipe.resolve(<value>) -> <pipe>` returns a pipe that will resolve with the given value.
+
+`pipe.reject(<error>) -> <pipe>` returns a pipe that will reject with the given error.
+
+`pipe.all(<Array[Thenable]>) -> <pipe>` resolves after all thenables (Promise-compatible asynchronous computations) in the given array did resolve.
+
+- Passes on an array of results.
+
+`pipe.race(<Array[Thenable]>) -> <pipe>` resolves as soon as the first of all the thenables (Promise-compatible asynchronous computations) resolved.
+
+- Passes on the respective result.
+
+`pipe.from(<Array>) -> <pipe>` creates an iterable pipe on which `.map(<fn>)` `.filter(<fn>)` `.forEach(<fn>)` `.reduce(<fn>)` can be used, from an array of values.
+
+`pipe.wrap(<NodeJS-style-callback>) -> <pipe>` wraps a NodeJS style callback function (1st argument error, others results) into a pipe.
+
+- Will resolve with the given arguments in an array (if more than one), with the result value otherwise.
+- Will reject on error.
+
+*NOT RECOMMENDED: `pipe.buffer(<size>) -> <buffer>` creates a buffer that keeps maximum the `<size>` amount of emitted values before the consuming operation is retrieving them. If the consumer is too slow and a `<size>` is given, values might be omitted. Without a `<size>` given and a slow consumer the buffer might overflow and crash your application. It's advisable to structure your code so that a buffer is not needed.*
+
+  - *`<buffer>.emit(<value>)` emits a value onto the buffer. The value is stored until a pipe consumer retrieves it or it gets pushed from the buffer by reaching the `<size>` limit.*
+  - *`<buffer>.resolve(<value>)` resolves the pipe underneath the buffer.*
+  - *`<buffer>.reject(<error>)` rejects the pipe underneath the buffer.*
+  - *`<buffer>.pipe` the pipe underneath the buffer.*
 
 ## HTML
 

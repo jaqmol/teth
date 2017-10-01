@@ -1,5 +1,5 @@
 /* Copyright 2017 Ronny Reichmann */
-/* CESTRE is teth's [CE]ntralized [S]tate [TRE]e */
+/* CESTRE is teth's [CE]ntralised [S]tate [TRE]e */
 /* Inspired by Flux and Redux */
 
 const objectPath = require('object-path')

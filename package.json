@@ -1,6 +1,6 @@
 {
   "name": "teth",
-  "version": "1.0.11",
+  "version": "1.0.12",
   "description": "Functional, reactive, pattern matching based, centralized state tree, open source JS library.",
   "main": "init.js",
   "scripts": {
@@ -26,7 +26,6 @@
     "bloomrun": "^3.0.4",
     "jsonic": "^0.3.0",
     "object-path": "^0.11.4",
-    "reload": "^2.2.1",
     "route-parser": "0.0.5",
     "snabbdom": "^0.6.9",
     "teth-pipe": "^1.0.2"

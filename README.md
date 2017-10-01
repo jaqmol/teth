@@ -14,7 +14,7 @@ Static/strong typing does not guarantee program correctness! Popular JS preproce
 
 Expressing everything as a (lazily named) class and scattering business logic throughout deep and poorly conceived inheritance trees, have rendered countless software-projects nearly unmaintainable.
 
-`Teth` takes a different path by simplifying the complex and providing affordance for explicit expression, to omit the potentially harmful:
+`Teth` takes a different path by simplifying the complex and providing affordance for explicit expression, to omit the potentially harmful. Aspects of Teth:
 
 - Test-Driven-Development with Functional-Reactive Programming
 - Entry Conditions and Computation Contexts
@@ -22,7 +22,7 @@ Expressing everything as a (lazily named) class and scattering business logic th
 
 ## Example and starter project: **teth-todo**
 
-[Todo app implemented in teth and T.](https://github.com/jaqmol/teth-todo) Provides you a best practice example of how to structure an app with teth.
+[Todo app implemented in teth and T.](https://github.com/jaqmol/teth-todo) Provides a best practice example of how to structure an app with teth.
 
 ## TOC
 

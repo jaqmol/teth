@@ -1,4 +1,4 @@
-<img src="./teth-logo.svg" onerror="this.parentElement.removeChild(this)">
+![TETH](./teth-logo.svg "TETH")
 
 # teth
 
@@ -26,14 +26,14 @@ Expressing everything as a (lazily named) class and scattering business logic th
 
 ## TOC
 
-- [define(...) — Define T-Function](#define-)
-- [send(...) — Invoke First Function Definition that Matches](#send-)
-- [circular(...) — Invoke All Function Definitions that Match](#circular-)
-- [context.get(...) — Get/Create Computation Context](#context-get-)
-- [init(...) — Init Teth App](#init-)
+- [define(...) — Define T-Function](#define)
+- [send(...) — Invoke First Function Definition that Matches](#send)
+- [circular(...) — Invoke All Function Definitions that Match](#circular)
+- [context.get(...) — Get/Create Computation Context](#context-get)
+- [init(...) — Init Teth App](#init)
 - [cestre — Centralised State Tree](#cestre)
 - [pipe — Promise compatible Map/Reduce with Backpressure](#pipe)
-- [HTML — Tags expressed as JS continuation](#HTML)
+- [HTML — Tags expressed as JS continuation](#html)
 
 ## T
 

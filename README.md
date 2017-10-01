@@ -4,23 +4,7 @@
 
 Library for application development: minimalist, functional, reactive, pattern matching, single immutable state tree. Teth-based applications are written in **T**, a JavaScript-DSL.
 
-## Why?
-
-Static/strong typing does not guarantee program correctness! Popular JS preprocessor-languages fail to make substantial contributions to fix complexity- and robustness-problems.
-
-> "Static Types Give You a False Sense of Security" — Eric Elliot, [The Shocking Secret About Static Types](https://medium.com/javascript-scene/the-shocking-secret-about-static-types-514d39bf30a3)
-
-> “Whilst not conclusive, the lack of evidence in the charts that more advanced type languages are going to save us from writing bugs is very disturbing.” — Daniel Lebrero, [The broken promise of static typing](https://labs.ig.com/static-typing-promise)
-
-Expressing everything as a (lazily named) class and scattering business logic throughout deep and poorly conceived inheritance trees, have rendered countless software-projects nearly unmaintainable.
-
-`Teth` takes a different path by simplifying the complex and providing affordance for explicit expression, to omit the potentially harmful. Aspects of Teth:
-
-- Test-Driven-Development with Functional-Reactive Programming
-- Entry Conditions and Computation Contexts
-- Explicit State Mutations without Side-Effects
-
-## Example and starter project: **teth-todo**
+## example- and starter-project *teth-todo*
 
 [Todo app implemented in teth and T.](https://github.com/jaqmol/teth-todo) Provides a best practice example of how to structure an app with teth.
 
@@ -34,6 +18,22 @@ Expressing everything as a (lazily named) class and scattering business logic th
 - [cestre — Centralised State Tree](#cestre)
 - [pipe — Promise compatible Map/Reduce with Backpressure](#pipe)
 - [HTML — Tags expressed as JS continuation](#html)
+
+## why?
+
+Static/strong typing does not guarantee program correctness per se. Popular preprocessor-languages compiling to JS fail to make substantial contributions to fix complexity- and robustness-problems.
+
+> "Static Types Give You a False Sense of Security" — Eric Elliot, [The Shocking Secret About Static Types](https://medium.com/javascript-scene/the-shocking-secret-about-static-types-514d39bf30a3)
+
+> “Whilst not conclusive, the lack of evidence in the charts that more advanced type languages are going to save us from writing bugs is very disturbing.” — Daniel Lebrero, [The broken promise of static typing](https://labs.ig.com/static-typing-promise)
+
+Expressing everything as a improperly named class and casting business logic throughout deep and poorly conceived inheritance trees, have rendered countless software-projects nearly unmaintainable.
+
+`Teth` takes a different path by emphasising the following aspects:
+
+- Test-Driven-Development with Functional-Reactive Programming
+- Entry Conditions and Computational Contexts
+- Explicit State Mutations without Side-Effects
 
 ## T
 

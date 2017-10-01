@@ -37,8 +37,8 @@ function match (matchLiteral) {
     const routine = patternMatcher.lookup(literal)
     if (routine) return routine(literal)
     else {
-      if (notFoundCallback) notFoundCallback(literal)
-      else if (unknownRoutine) unknownRoutine(literal)
+      if (notFoundCallback) return notFoundCallback(literal)
+      else if (unknownRoutine) return unknownRoutine(literal)
       else {
         raise(
           'No match found for',
@@ -56,8 +56,8 @@ function match (matchLiteral) {
     const allRoutines = patternMatcher.list(literal)
     if (allRoutines.length) return allRoutines.map(cb => cb(literal))
     else {
-      if (notFoundCallback) notFoundCallback(literal)
-      else if (unknownRoutine) unknownRoutine(literal)
+      if (notFoundCallback) return notFoundCallback(literal)
+      else if (unknownRoutine) return unknownRoutine(literal)
       else {
         raise(
           'No match found for',

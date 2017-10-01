@@ -45,6 +45,21 @@ test('matcher instance', () => {
   })
   expect(matcher.do(message)).toBe(555)
 })
+test('matcher instance with unknown', () => {
+  const message = {say: 'Hello', to: 'Mr. Smith'}
+  const matcher = match()
+    .define({say: 'Hello'}, msg => {
+      expect(msg).toEqual(message)
+      return 555
+    })
+    .define({say: 'Hi'}, msg => {
+      expect(false).toBe(true)
+      return 666
+    })
+    .unknown(msg => 111)
+  expect(matcher.do(message)).toBe(555)
+  expect(matcher.do({say: 'OneEleven!'})).toBe(111)
+})
 test('define and send', done => {
   const message = {say: 'Hello', to: 'Mr. Smith'}
   const { define, send } = context()

@@ -3,6 +3,7 @@
 
 const route = require('./route')
 const { define } = require('./T')
+const cestre = require('./cestre')
 const testOrigin = 'http://some.origin.com'
 
 function composeMockWindow () {
@@ -33,25 +34,25 @@ function replaceMockWindow () {
 
 test('route without variables', done => {
   const mockWindow = replaceMockWindow()
-  const patternShowAllItems = {type: 'route', cmd: 'show-all-items'}
-  const patternSowActiveItems = {type: 'route', cmd: 'show-active-items'}
-  const patternShowCompleteItems = {type: 'route', cmd: 'show-completed-items'}
+  const patternShowAllItems = {'change-route': 'show-all-items'}
+  const patternShowActiveItems = {'change-route': 'show-active-items'}
+  const patternShowCompleteItems = {'change-route': 'show-completed-items'}
   const root = route('/#', patternShowAllItems)
-  root.route('/active', patternSowActiveItems)
+  root.route('/active', patternShowActiveItems)
   root.route('/completed', patternShowCompleteItems)
   let receptionCount = 0
   define(patternShowAllItems, msg => {
-    expect(msg).toEqual(patternShowAllItems)
+    expect(msg).toEqual(Object.assign({ params: {} }, patternShowAllItems))
     receptionCount += 1
     if (receptionCount === 3) done()
   })
-  define(patternSowActiveItems, msg => {
-    expect(msg).toEqual(patternSowActiveItems)
+  define(patternShowActiveItems, msg => {
+    expect(msg).toEqual(Object.assign({ params: {} }, patternShowActiveItems))
     receptionCount += 1
     if (receptionCount === 3) done()
   })
   define(patternShowCompleteItems, msg => {
-    expect(msg).toEqual(patternShowCompleteItems)
+    expect(msg).toEqual(Object.assign({ params: {} }, patternShowCompleteItems))
     receptionCount += 1
     if (receptionCount === 3) done()
   })
@@ -62,25 +63,25 @@ test('route without variables', done => {
 
 test('route with variables', done => {
   const mockWindow = replaceMockWindow()
-  const patternShowRootItems = {type: 'route', cmd: 'show-root-items'}
-  const patternActivateItem = {type: 'route', cmd: 'activate-item'}
-  const patternCompleteItem = {type: 'route', cmd: 'complete-item'}
+  const patternShowRootItems = {'change-route': 'show-root-items'}
+  const patternActivateItem = {'change-route': 'activate-item'}
+  const patternCompleteItem = {'change-route': 'complete-item'}
   const root = route('/#', patternShowRootItems)
   root.route('/activate/:itemId', patternActivateItem)
   root.route('/complete/:itemId', patternCompleteItem)
   let receptionCount = 0
   define(patternShowRootItems, msg => {
-    expect(msg).toEqual(patternShowRootItems)
+    expect(msg).toEqual(Object.assign({ params: {} }, patternShowRootItems))
     receptionCount += 1
     if (receptionCount === 3) done()
   })
   define(patternActivateItem, msg => {
-    expect(msg).toEqual(Object.assign({ itemId: '111' }, patternActivateItem))
+    expect(msg).toEqual(Object.assign({ params: { itemId: '111' } }, patternActivateItem))
     receptionCount += 1
     if (receptionCount === 3) done()
   })
   define(patternCompleteItem, msg => {
-    expect(msg).toEqual(Object.assign({ itemId: '222' }, patternCompleteItem))
+    expect(msg).toEqual(Object.assign({ params: { itemId: '222' } }, patternCompleteItem))
     receptionCount += 1
     if (receptionCount === 3) done()
   })
@@ -91,24 +92,24 @@ test('route with variables', done => {
 
 test('route change with several listeners', done => {
   const mockWindow = replaceMockWindow()
-  const listenerPattern = {type: 'route', cmd: 'inform-about'}
+  const listenerPattern = {'change-route': 'inform-about'}
   const root = route('/#', 'type: ignored-route')
   root.route('/inform/:itemId', listenerPattern)
   let factor = 1
   const value = 111
   let receptionCount = 0
   define(listenerPattern, msg => {
-    expect(msg).toEqual(Object.assign({ itemId: `${factor * value}` }, listenerPattern))
+    expect(msg).toEqual(Object.assign({ params: { itemId: `${factor * value}` } }, listenerPattern))
     receptionCount += 1
     if (receptionCount === 9) done()
   })
   define(listenerPattern, msg => {
-    expect(msg).toEqual(Object.assign({ itemId: `${factor * value}` }, listenerPattern))
+    expect(msg).toEqual(Object.assign({ params: { itemId: `${factor * value}` } }, listenerPattern))
     receptionCount += 1
     if (receptionCount === 9) done()
   })
   define(listenerPattern, msg => {
-    expect(msg).toEqual(Object.assign({ itemId: `${factor * value}` }, listenerPattern))
+    expect(msg).toEqual(Object.assign({ params: { itemId: `${factor * value}` } }, listenerPattern))
     receptionCount += 1
     if (receptionCount === 9) done()
   })
@@ -117,4 +118,30 @@ test('route change with several listeners', done => {
   mockWindow.changeHrefAndFireHashChange(testOrigin + `/#/inform/${factor * value}`)
   factor += 1
   mockWindow.changeHrefAndFireHashChange(testOrigin + `/#/inform/${factor * value}`)
+})
+
+test('route with state mutation', done => {
+  const mockWindow = replaceMockWindow()
+  cestre.init({ activeRoute: 'init' })
+  const state = cestre.get()
+  const mutateRoute = state.mutate('activeRoute')
+  const root = route('/#', mutateRoute, () => ['all'])
+  root.route('/active', mutateRoute, () => ['active'])
+  root.route('/completed', mutateRoute, () => ['completed'])
+  root.route('/show/:itemId', mutateRoute, msg => [{ show: msg.params.itemId }])
+  let expectedRoute = 'init'
+  let finish = false
+  define(cestre.didChangePattern, state('activeRoute'), (msg, activeRoute) => {
+    expect(activeRoute).toEqual(expectedRoute)
+    if (finish) done()
+  })
+  expectedRoute = 'all'
+  mockWindow.changeHrefAndFireHashChange(testOrigin + '/#')
+  expectedRoute = 'active'
+  mockWindow.changeHrefAndFireHashChange(testOrigin + '/#/active')
+  expectedRoute = 'completed'
+  mockWindow.changeHrefAndFireHashChange(testOrigin + '/#/completed')
+  expectedRoute = { show: '777' }
+  finish = true
+  mockWindow.changeHrefAndFireHashChange(testOrigin + '/#/show/777')
 })

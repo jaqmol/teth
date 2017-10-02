@@ -17,6 +17,7 @@ Library for application development: minimalist, functional, reactive, pattern m
 - [init(...) — Init Teth App](#init)
 - [cestre — Centralised State Tree](#cestre)
 - [pipe — Promise compatible Map/Reduce with Backpressure](#pipe)
+- [route — T-based Router Integrated With Cestre ](#route)
 - [HTML — Tags expressed as JS continuation](#html)
 
 ## why?
@@ -265,7 +266,7 @@ send('add: one, to: bicycles.muscle')
   1. the original `<message>` as the first argument
   2. all state models as following arguments
 
-### State mutations
+### state mutations
 
 In a T-function defined with a `state.mutate(...)` middleware state changes must always be returned as arrays of the state models in exactly the same order and amount as received, message argument omitted. E.g. if the function handler was called with `msg, muscle, electric`, the return value must be `[muscle, electric]`. The return values contained in the array must be instance-inequal in order to trigger a redraw event and instance-equal not to.
 
@@ -376,11 +377,11 @@ readFile('./package.json', 'utf8')
 
 ### operators
 
-`.map(<fn>) -> <pipe>` `.filter(<fn>) -> <pipe>` `.forEach(<fn>) -> <pipe>` `.reduce(<fn>) -> <pipe>` behave like their array counterparts.
+`.map(<operate-fn>) -> <pipe>` `.filter(<operate-fn>) -> <pipe>` `.forEach(<operate-fn>) -> <pipe>` `.reduce(<operate-fn>) -> <pipe>` behave like their array counterparts.
 
-`.reduce(<fn>) -> <pipe>` the reduce result is retrieved by chaining a `then()`.
+`.reduce(<operate-fn>) -> <pipe>` the reduce result is retrieved by chaining a `then()`.
 
-`.then(<fn>) -> <pipe>` `.catch(<fn>)` behave like their Promise counterparts.
+`.then(<operate-fn>) -> <pipe>` `.catch(<fn>)` behave like their Promise counterparts.
 
 `.debounce(<delay>) -> <pipe>` continues the stream of operations only after a firing silence of the previous operation of at least `<delay>` milliseconds.
 
@@ -413,6 +414,70 @@ readFile('./package.json', 'utf8')
   - *`<buffer>.resolve(<value>)` resolves the pipe underneath the buffer.*
   - *`<buffer>.reject(<error>)` rejects the pipe underneath the buffer.*
   - *`<buffer>.pipe` the pipe underneath the buffer.*
+
+## route
+
+**teth** router is build on **T** and integrated into **cestre**. [Based on Route-Parser.](https://github.com/rcs/route-parser) There are 2 ways of usage which can be intermixed:
+
+### routing by state change *(recommended)*
+
+In the example below 4 routes are defined:
+
+- `/#` – the base route
+- `/#/active` – active route based upon base route
+- `/#/completed` – completed route based upon base route
+- `/#/show/:itemId` – show item route based upon base route
+
+``` javascript
+// Defining routes
+const mutateRoute = state.mutate('activeRoute') // activeRoute must exist in state tree
+const base = route('/#', mutateRoute, () => [{ show: 'all' }])
+base.route('/active', mutateRoute, () => [{ show: 'active' }])
+base.route('/completed', mutateRoute, () => [{ show: 'completed' }])
+base.route('/show/:itemId', mutateRoute, msg => [{ showItem: msg.params.itemId }])
+
+// Using route-state
+define('render: something',
+  state('activeRoute'),
+  (msg, activeRoute) => {
+    // do something with activeRoute ...
+  })
+```
+
+Each call to `route(...)` returns a route-function that can be used to define sub-routes extending the one defined.
+
+`route(<description>, <mutation-middleware>, <mutation-handler-fn>) -> <sub-route-fn>` is defining a route much alike a state-mutating T-function is defined.
+
+- `<description>` describes the URL of the route. The syntax:
+
+| Expression      | Description          |
+| --------------- | -------------------- |
+| `:name`         | a parameter to capture from the route up to `/`, `?`, or end of string  |
+| `*splat`        | a splat to capture from the route up to `?` or end of string |
+| `()`            | Optional group that doesn't have to be part of the query. Can contain nested optional groups, params, and splats
+| anything else   | free form literals   |
+
+``` ascii
+Examples:
+
+/some/(optional/):thing
+/users/:id/comments/:comment/rating/:rating
+/*a/foo/*b
+/books/*section/:title
+/books?author=:author&subject=:subject
+```
+
+- `<mutation-middleware>` [see cestre state mutations.](#state-mutations)
+- `<mutation-handler-fn>` [see cestre state mutations.](#state-mutations) Path parameters are accessible by the property `params` from the message the handler is called with.
+- `<sub-route-fn>` a function that can be used to define sub-routes. Behaves the same as `route(...)`.
+
+### routing by messaging
+
+`route(<description>, <pattern>) -> <sub-route-fn>` is defining a route for messaging.
+
+- `<description>` see above section.
+- `<pattern>` the pattern literal that will be extended to send route change messages. Path parameters are accessible by the property `params` from the message the receiving T-function-handler is called with.
+- `<sub-route-fn>` see above section.
 
 ## HTML
 

@@ -8,26 +8,30 @@ const pipe = require('./pipe')
 
 const cestre = (() => {
   const allStateTrees = {}
-  function get () {
-    if (!arguments.length) return get('main')
+  function getCreateStateTree () {
+    if (!arguments.length) return getCreateStateTree('main')
     const name = arguments[0]
-    if (!allStateTrees[name]) allStateTrees[name] = composeCestreMiddleware(name)
+    if (!allStateTrees[name]) {
+      allStateTrees[name] = composeCestreMiddleware(name)
+    }
     return allStateTrees[name]
   }
-  function init () {
+  getCreateStateTree.init = function () {
     if (!arguments.length) throw new Error('No initial state provided')
-    else if (arguments.length === 1) return init('main', arguments[0])
+    else if (arguments.length === 1) {
+      return getCreateStateTree.init('main', arguments[0])
+    }
     const name = arguments[0]
     const initialStateValue = arguments[1]
-    const state = get(name)
+    const state = getCreateStateTree(name)
     state.init(initialStateValue)
     return state
   }
-  const didChangePattern = Object.freeze({
+  getCreateStateTree.didChangePattern = Object.freeze({
     type: 'state-tree',
     event: 'did-change'
   })
-  return Object.freeze({ init, get, didChangePattern })
+  return getCreateStateTree
 })()
 
 function composeCestreMiddleware (name) {

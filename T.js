@@ -115,8 +115,15 @@ function composeDefine (contextMatcher, contextComposit) {
   }
 }
 
-const composeContext = (() => {
-  function createContext () {
+const context = (() => {
+  const allNamedConexts = {}
+  function getCreateContext (name) {
+    if (name) {
+      if (!allNamedConexts[name]) allNamedConexts[name] = composeContext()
+      return allNamedConexts[name]
+    } else return composeContext()
+  }
+  function composeContext () {
     const contextMatcher = match()
     const composit = {}
     composit.define = composeDefine(contextMatcher, composit)
@@ -147,15 +154,10 @@ const composeContext = (() => {
         return pipe.reject(e)
       }
     }
-    composit.context = createContext
+    composit.context = getCreateContext
     return Object.freeze(composit)
   }
-  const allNamedConexts = {}
-  createContext.get = name => {
-    if (!allNamedConexts[name]) allNamedConexts[name] = createContext()
-    return allNamedConexts[name]
-  }
-  return createContext
+  return getCreateContext
 })()
 
 // function resonateContext (ctx) {
@@ -174,4 +176,4 @@ const composeContext = (() => {
 module.exports = Object.freeze(
   Object.assign(
     { match, composeError, raise }, // TODO: remove composeError
-    composeContext()))
+    context()))

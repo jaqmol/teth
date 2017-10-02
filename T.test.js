@@ -209,8 +209,8 @@ test('argument multiplier middleware', () => {
     })
 })
 test('create named contexts', () => {
-  const instanceA1 = context.get('instance-a')
-  const instanceA2 = context.get('instance-a')
+  const instanceA1 = context('instance-a')
+  const instanceA2 = context('instance-a')
   expect(instanceA1).toBeDefined()
   expect(instanceA2).toBeDefined()
   expect(instanceA1).toBe(instanceA2)

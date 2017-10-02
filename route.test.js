@@ -123,7 +123,7 @@ test('route change with several listeners', done => {
 test('route with state mutation', done => {
   const mockWindow = replaceMockWindow()
   cestre.init({ activeRoute: 'init' })
-  const state = cestre.get()
+  const state = cestre()
   const mutateRoute = state.mutate('activeRoute')
   const root = route('/#', mutateRoute, () => ['all'])
   root.route('/active', mutateRoute, () => ['active'])

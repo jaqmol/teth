@@ -8,33 +8,20 @@ Library for application development: minimalist, functional, reactive, pattern m
 
 [Todo app implemented in teth and T.](https://github.com/jaqmol/teth-todo) Provides a best practice example of how to structure an app with teth.
 
+[WHY?](WHY.md)
+
 ## TOC
 
 - [define(...) — Define T-Function](#define)
 - [send(...) — Invoke First Function Definition that Matches](#send)
+- [send.sync(...) – Invoke Function Synchronously](#sendsync)
 - [circular(...) — Invoke All Function Definitions that Match](#circular)
-- [context.get(...) — Get/Create Computation Context](#contextget)
+- [context(...) — Get/Create Computation Context](#context)
 - [init(...) — Init Teth App](#init)
 - [cestre — Centralised State Tree](#cestre)
 - [pipe — Promise compatible Map/Reduce with Backpressure](#pipe)
 - [route — T-based Router Integrated With Cestre ](#route)
 - [HTML — Tags expressed as JS continuation](#html)
-
-## why?
-
-Static/strong typing does not guarantee program correctness per se. Popular preprocessor-languages compiling to JS fail to make substantial contributions to fix complexity- and robustness-problems.
-
-> "Static Types Give You a False Sense of Security" — Eric Elliot, [The Shocking Secret About Static Types](https://medium.com/javascript-scene/the-shocking-secret-about-static-types-514d39bf30a3)
-
-> “Whilst not conclusive, the lack of evidence in the charts that more advanced type languages are going to save us from writing bugs is very disturbing.” — Daniel Lebrero, [The broken promise of static typing](https://labs.ig.com/static-typing-promise)
-
-Expressing everything as a improperly named class and casting business logic throughout deep and poorly conceived inheritance trees, have rendered countless software-projects nearly unmaintainable.
-
-`Teth` takes a different path by emphasising the following aspects:
-
-- Test-Driven-Development with Functional-Reactive Programming
-- Entry Conditions and Computational Contexts
-- Explicit State Mutations without Side-Effects
 
 ## T
 
@@ -94,6 +81,22 @@ send({ key: event.key, value: event.target.value})
 
 - `<pipe>` is the return value of sending a message. Even if the handler function is not explicitly returning a `<pipe>`, T will resolve the return value with a `<pipe>`.
 
+### send.sync(...)
+
+``` javascript
+import { h1 } from 'teth/HTML'
+import { define, send } from 'teth/T'
+define('render: header', msg => {
+  return h1('.header-1').content('TETH')
+})
+send.sync('render: header')
+```
+
+`send.sync(<message>) -> <pipe>` sends synchronous messages via the computation context. T will not resolve the handler function's return value with a `<pipe>`.
+
+- Used for T-functions that must return immediately, like during rendering `teth/HTML`.
+- **Note:** use this way of calling T-functions for exceptional cases only. Most of your code should be handled in asynchronous manner in order to reduce possible future refactoring costs.
+
 ### message and pattern conventions
 
 Because functions are defined with patterns (entry-conditions), messages play a leading role in **T**. It's important to choose a reasonable convention and stick to it throughout the application. Splitting your code-base into module-components by using computational contexts helps with keeping messages simple and local.
@@ -132,13 +135,13 @@ The functions `define(...)`, `send(...)`, `circular(...)`, `route(...)` (and oth
 { role: 'login-event', cmd: 'authenticate' }
 ```
 
-### context.get(...)
+### context(...)
 
 ``` javascript
 // backbone send and context functions:
 import { send, circular, context } from 'teth/T'
 // create component-discrete versions of define, send and circular:
-const ctx = context.get('my-component')
+const ctx = context('my-component')
 // backbone communication with other components:
 send(/* ... */)
 circular(/* ... */)
@@ -148,18 +151,15 @@ ctx.send(/* ... */)
 ctx.circular(/* ... */)
 ```
 
-`context.get(<name>) -> <discrete-context>` gets, if necessary creates, discrete named computation contexts to insulate components/services.
+`context([<name>]) -> <discrete-context>` gets, if necessary creates, discrete named computation contexts to insulate components/services.
+
+- If the `<name>` attribute is omitted an unnamed context is created.
+- If a context is supposed to be reused in several source-code files, using a named context is recommended.
 
 - The 3 main functions of T `define(...)`, `send(...)`, `circular(...)` imported directly from 'teth/T' belong to the backbone computation context.
-- Discrete computation contexts provide separation of concern and encapsulation; they represent the means to isolate components and services from each other.
-- `context.get(...)` invoked several times from completely disconnected parts of the application always returns the same context. Thus providing great testability.
-- The backbone context forms a communication channel between components and services.
-
-### context()
-
-`context() -> <discrete-context>` creates an unnamed discrete computation contexts to insulate components/services.
-
-- Contexts behave like those created with `context.get(...)`.
+- - The backbone context forms a communication channel between components and services.
+- Discrete computation contexts provide separation of concern and encapsulation; they represent means to isolate components and services from each other.
+- `context(<name>)` invoked several times from completely disconnected parts of the application always returns the same context. Thus providing great testability.
 
 ## init(...)
 
@@ -230,7 +230,7 @@ init({
 
 ``` javascript
 // component.fcd.js
-const state = cestre.get()
+const state = cestre()
 // Define interest in specific state in T function definition
 define('render: one, from: bicycles.muscle',
   state('bicycles.muscle'), // interest for state at keypath "bicycles.muscle"
@@ -240,7 +240,7 @@ define('render: one, from: bicycles.muscle',
 send('render: one, from: bicycles.muscle')
 
 // component.ctx.js
-const state = cestre.get()
+const state = cestre()
 // Define intent to mutate state in T function definition
 define('add: one, to: bicycles.muscle',
   state.mutate('bicycles.muscle', 'bicycles.electric'), // intent to mutate states at specified keypaths
@@ -256,7 +256,7 @@ send('add: one, to: bicycles.muscle')
 
 - `<initial-state>` is an object literal representing the full initial state of the complete application.
 
-`cestre.get() -> <stateFn>` get the state function of the centralised state tree.
+`cestre() -> <stateFn>` get the state function of the centralised state tree.
 
 - `<stateFn>` The state function allows to express interest to retrieve or mutate a state model ...
 

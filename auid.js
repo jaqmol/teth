@@ -12,7 +12,7 @@ function auid () {
     : currentCount + 1
   const countComp = Number(currentCount).toString(16)
   const randomComp = randomBytes(2).toString('hex')
-  return `auid_${zoneComp}_${stampComp}_${countComp}_${randomComp}`
+  return `g${zoneComp}h${stampComp}i${countComp}j${randomComp}`
 }
 
 module.exports = auid

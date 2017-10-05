@@ -3,13 +3,19 @@
 /* eslint-disable */
 
 const Route = require('route-parser')
+const pipe = require('./pipe')
 const jsonic = require('jsonic')
-const { define, context, circular } = require('teth/T') // ./T
+const { define, context, circular, send } = require('./T')
 const immutableLiteral = lit => Object.freeze(typeof lit === 'string' ? jsonic(lit) : lit)
 const ctx = context()
 
-let windowLocation = () => window.location
-let addWindowEventListener = window.addEventListener
+function retrieveWindow () {
+  return pipe(resolve => {
+    send('type: teth-globals, retrieve: window-object')
+      .then(win => { resolve(win) })
+      .catch(err => { resolve(window) })
+  })
+}
 
 function route (description, ...args) {
   if (args.length === 2) {
@@ -20,24 +26,27 @@ function route (description, ...args) {
     throw new Error('Call route(...) either with (<description>, <pattern>) or (<description>, <middleware>, <routine>)')
   }
 }
-route.change = (...pathComponents) => {
-  windowLocation().hash = pathComponents.join('')
-}
-route.__mockWindow = mockWindow => {
-  windowLocation = () => mockWindow.location
-  addWindowEventListener = mockWindow.addEventListener
+route.change = (...routeComponents) => {
+  retrieveWindow()
+    .then(win => {
+      win.location.hash = routeComponents.join('')
+    })
+    .catch(console.error)
 }
 
 function composeRouteBase (description, hitCallback) {
-  const matcher = new Route(description)
-  function onChange () {
-    const location = windowLocation()
-    const routeString = location.href.slice(location.origin.length)
-    const params = matcher.match(routeString)
-    if (params) hitCallback(params)
-  }
-  addWindowEventListener('load', onChange)
-  addWindowEventListener('hashchange', onChange)
+  retrieveWindow()
+    .then(win => {
+      const matcher = new Route(description)
+      function onChange () {
+        const routeString = win.location.href.slice(win.location.origin.length)
+        const params = matcher.match(routeString)
+        if (params) hitCallback(params)
+      }
+      win.addEventListener('load', onChange)
+      win.addEventListener('hashchange', onChange)
+    })
+    .catch(console.error)
   const composit = {
     route: (subDescription, ...args) => {
       const fullSubDescription = description + subDescription

@@ -25,15 +25,11 @@ function composeMockWindow () {
   return Object.freeze({ addEventListener, location, changeHrefAndFireHashChange, changeOrigin })
 }
 
-function replaceMockWindow () {
-  const mockWindow = composeMockWindow()
-  route.__mockWindow(mockWindow)
-  mockWindow.changeOrigin(testOrigin)
-  return mockWindow
-}
+const mockWindow = composeMockWindow()
+define('type: teth-globals, retrieve: window-object', () => mockWindow)
 
 test('route without variables', done => {
-  const mockWindow = replaceMockWindow()
+  mockWindow.changeOrigin(testOrigin)
   const patternShowAllItems = {'change-route': 'show-all-items'}
   const patternShowActiveItems = {'change-route': 'show-active-items'}
   const patternShowCompleteItems = {'change-route': 'show-completed-items'}
@@ -62,7 +58,7 @@ test('route without variables', done => {
 })
 
 test('route with variables', done => {
-  const mockWindow = replaceMockWindow()
+  mockWindow.changeOrigin(testOrigin)
   const patternShowRootItems = {'change-route': 'show-root-items'}
   const patternActivateItem = {'change-route': 'activate-item'}
   const patternCompleteItem = {'change-route': 'complete-item'}
@@ -91,13 +87,15 @@ test('route with variables', done => {
 })
 
 test('route change with several listeners', done => {
-  const mockWindow = replaceMockWindow()
+  mockWindow.changeOrigin(testOrigin)
+  const ignorePattern = 'type: ignored-route'
   const listenerPattern = {'change-route': 'inform-about'}
   const root = route('/#', 'type: ignored-route')
   root.route('/inform/:itemId', listenerPattern)
   let factor = 1
   const value = 111
   let receptionCount = 0
+  define(ignorePattern, () => {})
   define(listenerPattern, msg => {
     expect(msg).toEqual(Object.assign({ params: { itemId: `${factor * value}` } }, listenerPattern))
     receptionCount += 1
@@ -121,7 +119,7 @@ test('route change with several listeners', done => {
 })
 
 test('route with state mutation', done => {
-  const mockWindow = replaceMockWindow()
+  mockWindow.changeOrigin(testOrigin)
   cestre.init({ activeRoute: 'init' })
   const state = cestre()
   const mutateRoute = state.mutate('activeRoute')

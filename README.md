@@ -200,7 +200,9 @@ init({
 
 For a full initialisation example see [latest version of Teth-Todo (frontend/src/main.js).](https://github.com/jaqmol/teth-todo)
 
-## remote(...) – Teth RPC Invocation for Client
+## remote(...)
+
+Client-side RPC invocation for Teth.
 
 ``` javascript
 import remote from 'teth/remote'
@@ -228,9 +230,9 @@ define('init: app', state.mutate('todoItems'), msg => {
 - `<context-name>` is the name of the named context addressed by the remote message.
 - `<message>` see above.
 
-## valet(...) – Teth RPC Adapter for Server
+## valet(...)
 
-Connects **T** with server side endpoint. Makes transparent RPC calls from client side **T** possible.
+Server-side RPC adapter for Teth. Connects **T** with server side endpoint. Makes transparent RPC calls from client side **T** possible.
 
 ``` javascript
 const http = require('http')

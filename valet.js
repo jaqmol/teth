@@ -6,7 +6,6 @@ const { send, context } = require('teth/T')
 function composeResponder (response) {
   function json (httpCode, literal) {
     const jsonString = JSON.stringify(literal)
-    console.log('valet should respond with:', httpCode, jsonString)
     response.writeHead(httpCode, {
       'Content-Length': Buffer.byteLength(jsonString),
       'Content-Type': 'application/json',

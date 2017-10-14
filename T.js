@@ -3,6 +3,7 @@
 const bloomrun = require('bloomrun')
 const jsonic = require('jsonic')
 const pipe = require('./pipe')
+const NXT_MSG_CB = Symbol.for('NXT_MSG_CB')
 const immutableLiteral = lit => Object.freeze(typeof lit === 'string' ? jsonic(lit) : lit)
 const composeError = (...args) => {
   const lastIdx = args.length - 1
@@ -73,22 +74,24 @@ function match (matchLiteral) {
   return Object.freeze(composit)
 }
 
-// Types might prove too great a seduction to end up in harmful thought patterns
-// function type (composePattern, composeFn) {
-//   const typeSymbol = Symbol()
-//   const immutableType = literal => Object.freeze(Object.assign(
-//     {type: typeSymbol}, literal
-//   ))
-//   const routine = composeFn
-//     ? msg => immutableType(composeFn(msg))
-//     : msg => immutableType(msg)
-//   const matcher = match()
-//     .define(composePattern, routine)
-//     .unknown(msg => raise('No match found for', JSON.stringify(msg), 'to compose this type', -3))
-//   const composer = composeMessage => matcher.send(composeMessage)
-//   composer.type = typeSymbol
-//   return Object.freeze(composer)
-// }
+/* EXAMPLE OF A TYPE IMPLEMENTATION ON TOP OF THE PATTERN NOTION
+ * DANGER: Types might prove too great a seduction to end up in a dead end concerning programming performance / effectiveness
+    function type (composePattern, composeFn) {
+      const typeSymbol = Symbol()
+      const immutableType = literal => Object.freeze(Object.assign(
+        {type: typeSymbol}, literal
+      ))
+      const routine = composeFn
+        ? msg => immutableType(composeFn(msg))
+        : msg => immutableType(msg)
+      const matcher = match()
+        .define(composePattern, routine)
+        .unknown(msg => raise('No match found for', JSON.stringify(msg), 'to compose this type', -3))
+      const composer = composeMessage => matcher.send(composeMessage)
+      composer.type = typeSymbol
+      return Object.freeze(composer)
+    }
+*/
 
 function proceduresPerformer (allProcedures) {
   function next (index, inputArgs) {
@@ -134,8 +137,10 @@ const context = (() => {
     composit.send = msg => {
       try {
         const result = contextMatcher.do(msg)
-        if (result && result.then && result.catch) return result
-        else return pipe.resolve(result)
+        if (result && result.then && result.catch) {
+          if (result[NXT_MSG_CB]) return result.then(r => r) // Trigger backpressured-eval
+          else return result
+        } else return pipe.resolve(result)
       } catch (e) {
         return pipe.reject(e)
       }
@@ -143,6 +148,7 @@ const context = (() => {
     composit.send.sync = msg => {
       return contextMatcher.do(msg)
     }
+    composit.invoke = composit.send
     composit.circular = msg => {
       try {
         return pipe.all(contextMatcher.doAll(msg)

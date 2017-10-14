@@ -1,23 +1,29 @@
-![TETH](./teth-logo.svg "TETH")
+![TETH](./teth-logo.png "TETH")
 
 # teth
 
 Library for application development: minimalist, functional, reactive, pattern matching, single immutable state tree. Teth-based applications are written in **T**, a JavaScript-DSL.
 
+[Learn about the reasons behind Teth.](WHY.md)
+
+## NEW IN 1.0.23
+
+A RPC-stack to exchange messages with the server much the same way as messages are send within **T** itself. Thus allowing for server-side **T** usage.
+
 ## example- and starter-project *teth-todo*
 
 [Todo app implemented in teth and T.](https://github.com/jaqmol/teth-todo) Provides a best practice example of how to structure an app with teth.
 
-[WHY?](WHY.md)
-
 ## TOC
 
 - [define(...) — Define T-Function](#define)
-- [send(...) — Invoke First Function Definition that Matches](#send)
+- [send(...) | invoke(...) — Invoke First Function Definition that Matches](#send-invoke)
 - [send.sync(...) – Invoke Function Synchronously](#sendsync)
 - [circular(...) — Invoke All Function Definitions that Match](#circular)
 - [context(...) — Get/Create Computation Context](#context)
 - [init(...) — Init Teth App](#init)
+- [remote(...) – Teth RPC Invocation for Client](#remote)
+- [valet(...) – Teth RPC Adapter for Server](#valet)
 - [cestre — Centralised State Tree](#cestre)
 - [pipe — Promise compatible Map/Reduce with Backpressure](#pipe)
 - [route — T-based Router Integrated With Cestre ](#route)
@@ -56,7 +62,7 @@ define('key: Escape', event => {
 
 Using `cestre` (see below) further strengthens expressiveness in intent.
 
-### send(...)
+### send(...) | invoke(...)
 
 ``` javascript
 import { define, send } from 'teth/T'
@@ -75,7 +81,7 @@ send({ key: event.key, value: event.target.value})
   })
 ```
 
-`send(<message>) -> <pipe>` sends T messages via the computation context it is used from. The first T-function (defined by `define(...)`) that matches the properties of `<message>` will be invoked. The return value is resolved as pipe if not provided as a thenable (pipe, Promise, Q, etc.).
+`send|invoke(<message>) -> <pipe>` sends T messages via the computation context it is used from. The first T-function (defined by `define(...)`) that matches the properties of `<message>` will be invoked. The return value is resolved as pipe if not provided as a thenable (pipe, Promise, Q, etc.).
 
 - `<message>` is an object literal. A message carries properties representing means of association, as well as properties representing values and data models.
 
@@ -164,6 +170,8 @@ ctx.circular(/* ... */)
 ## init(...)
 
 ``` javascript
+import remote from 'teth/init'
+
 init({
   renderPattern: 'render: app',
   state: {
@@ -189,6 +197,56 @@ init({
   - `renderPattern`: String|Object, is used to generate the message that is sent on state tree changes.
   - `state`: Object, is the initial state tree.
   - `selector`; String, the CSS selector of the element at which Teth is patching the app into the DOM.
+
+For a full initialisation example see [latest version of Teth-Todo (frontend/src/main.js).](https://github.com/jaqmol/teth-todo)
+
+## remote(...) – Teth RPC Invocation for Client
+
+``` javascript
+import remote from 'teth/remote'
+// ...
+remote.init('/api') // backend API route
+// ...
+define('init: app', state.mutate('todoItems'), msg => {
+  // RPC invocation to retrieve all todo items and update the state tree
+  return remote('retrieve: all-todo-items').then(items => [items])
+})
+```
+
+`remote.init(<backend-api-route>)` initialises a the remote backend endpoint.
+
+- `<backend-api-route>` a string representing the backend API route. I.e. `/api`.
+
+`remote(<message>) -> <pipe>` sends the `<message>` to the remote backend endpoint and returns a `pipe` resolving with the result.
+
+- `<message>` is a object literal representing the message to be send. In this respect behaves much like `send(...)`.
+
+*Alternative Invocation:*
+
+`remote(<context-name>, <message>) -> <pipe>` sends the `<message>` to the remote backend endpoint and there to the context specified by `<context-name>` and returns a `pipe` resolving with the result.
+
+- `<context-name>` is the name of the named context addressed by the remote message.
+- `<message>` see above.
+
+## valet(...) – Teth RPC Adapter for Server
+
+Connects **T** with server side endpoint. Makes transparent RPC calls from client side **T** possible.
+
+``` javascript
+const http = require('http')
+const valet = require('teth/valet')
+const { define } = require('teth/T')
+
+http.createServer(valet('/api')).listen(3030)
+
+define('retrieve: all-todo-items', msg => {
+  return /* allTodoItems */
+})
+```
+
+`valet([<route>])` initialises and returns a request/response handler function compatible with NodeJS and Express.
+
+- `<route>` if provided filters incoming request. Otherwise returns a 404 on NodeJS or invokes `next(..)` on Express.
 
 ## cestre
 

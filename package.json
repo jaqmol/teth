@@ -1,6 +1,6 @@
 {
   "name": "teth",
-  "version": "1.0.21",
+  "version": "1.0.23",
   "description": "Functional, reactive, pattern matching based, centralized state tree, open source JS library.",
   "main": "init.js",
   "scripts": {
@@ -31,7 +31,7 @@
     "object-path": "^0.11.4",
     "route-parser": "0.0.5",
     "snabbdom": "^0.6.9",
-    "teth-pipe": "^1.0.2"
+    "teth-pipe": "^1.0.5"
   },
   "devDependencies": {
     "jest": "^20.0.4",

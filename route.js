@@ -1,11 +1,10 @@
 /* Copyright 2017 Ronny Reichmann */
 /* ROUTE Define route-change events. */
-/* eslint-disable */
 
 const Route = require('route-parser')
 const pipe = require('./pipe')
 const jsonic = require('jsonic')
-const { define, context, circular, send } = require('./T')
+const { context, circular, send } = require('./T')
 const immutableLiteral = lit => Object.freeze(typeof lit === 'string' ? jsonic(lit) : lit)
 const ctx = context()
 
@@ -13,7 +12,7 @@ function retrieveWindow () {
   return pipe(resolve => {
     send('type: teth-globals, retrieve: window-object')
       .then(win => { resolve(win) })
-      .catch(err => { resolve(window) })
+      .catch(() => { resolve(window) })
   })
 }
 

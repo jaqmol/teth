@@ -3,8 +3,17 @@
 /* global XMLHttpRequest */
 
 const pipe = require('teth/pipe')
+const { send } = require('teth/T')
 
 let valetUrl = null
+
+function retrieveXhrProto () {
+  return pipe(resolve => {
+    send('type: teth-globals, retrieve: xhr-object')
+      .then(xhr => { resolve(xhr) })
+      .catch(() => { resolve(XMLHttpRequest) })
+  })
+}
 
 function remote (...args) {
   if (!valetUrl) return pipe.reject(new Error('Remote must be initialized before use'))
@@ -18,28 +27,30 @@ function remote (...args) {
   } else if (args.length === 1) {
     request.message = args[0]
   } else {
-    return pipe.reject(new Error('Remote must be called with either 1 argument <message> or 2 arguments <context-name>, <message>'))
+    return pipe.reject(new Error('Remote must be called with either 1 argument <message> or 2 arguments <context-name> and <message>'))
   }
-  return pipe((resolve, reject) => {
-    const handler = new XMLHttpRequest()
-    handler.open('POST', valetUrl)
-    handler.setRequestHeader('Content-Type', 'application/json')
-    handler.onreadystatechange = function () {
-      if (handler.readyState === XMLHttpRequest.DONE) {
-        let response = null
-        try {
-          response = JSON.parse(handler.responseText)
-        } catch (error) {
-          reject(error)
-          return
+  return retrieveXhrProto().then(XhRequest => {
+    return pipe((resolve, reject) => {
+      const handler = new XhRequest()
+      handler.open('POST', valetUrl)
+      handler.setRequestHeader('Content-Type', 'application/json')
+      handler.onreadystatechange = function () {
+        if (handler.readyState === 4) { /* .DONE not supported by some browsers and the test mock */
+          let response = null
+          try {
+            response = JSON.parse(handler.responseText)
+          } catch (error) {
+            reject(error)
+            return
+          }
+          if (response) {
+            if (handler.status === 200) resolve(response.result)
+            else reject(response)
+          } else reject(new Error('No response'))
         }
-        if (response) {
-          if (handler.status === 200) resolve(response.result)
-          else reject(response)
-        } else reject(new Error('No response'))
       }
-    }
-    handler.send(JSON.stringify(request))
+      handler.send(JSON.stringify(request))
+    })
   })
 }
 remote.init = remoteValetUrl => {

@@ -36,6 +36,7 @@
   "devDependencies": {
     "jest": "^20.0.4",
     "jsdoc": "^3.5.3",
-    "tiny-worker": "^2.1.1"
+    "tiny-worker": "^2.1.1",
+    "xhr-mock": "^1.9.1"
   }
 }

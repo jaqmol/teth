@@ -15,7 +15,7 @@ The majority of the mainstream approaches neglect fundamental principles of Obje
 
 ... while emphasising deceptive concepts like Inheritance, Polymorphism and Strong Typing. While the obvious main driver "resource efficiency" was understandable, misunderstanding of Object-Oriented-Design and arrogant ignorance towards alternative concepts for purely formal reasons (see Lisp vs. Smalltalk vs. Algol syntax) are not.
 
-A turnaround is perceivable in recent years and it becomes apparent that nowadays almost extinct programming environments like Smalltalk, Lisp or Eiffel represent in ways superior approaches towards object orientated design, as well as concerning their leading principles in framework architecture. Many of the failures repeated over and over again by mainstream frameworks and APIs where solved in Smalltalk and Lisp, often decades before nowadays mainstream environments where perceived. The people behind Smalltalk and Lips made those errors as well, but they recovered from them, understood the causes and redesigned their works. A similar recovery was not observed in the mainstream for decades. Fortunately many of the "old ways" are now rediscovered and enter the mainstream.
+A turnaround is perceivable in recent years and it becomes apparent that nowadays almost extinct programming environments like Smalltalk, Lisp or Eiffel represent in ways superior approaches towards object orientated design, as well as concerning their leading principles in framework architecture. Many of the failures repeated over and over again by mainstream frameworks and APIs where solved in Smalltalk and Lisp, often decades before nowadays mainstream environments where perceived. The people behind Smalltalk and Lisp made those errors as well, but they recovered from them, understood the causes and redesigned their works. A similar recovery was not observed in the mainstream for decades. Fortunately many of the "old ways" are now rediscovered and enter the mainstream.
 
 # why T?
 
@@ -25,7 +25,7 @@ Static/strong typing does not guarantee program correctness per se. Popular prep
 
 > “Whilst not conclusive, the lack of evidence in the charts that more advanced type languages are going to save us from writing bugs is very disturbing.” — Daniel Lebrero, [The broken promise of static typing](https://labs.ig.com/static-typing-promise)
 
-Expressing everything as a improperly named class and casting business logic throughout deep and poorly conceived inheritance trees, have rendered countless software-projects nearly unmaintainable.
+Expressing everything as an improperly named class and casting business logic throughout deep and poorly conceived inheritance trees, have rendered countless software-projects nearly unmaintainable.
 
 **Teth** and **T** take a different path by emphasising the following aspects:
 

@@ -6,9 +6,11 @@ Library for application development: minimalist, functional, reactive, pattern m
 
 [Learn about the reasons behind Teth.](WHY.md)
 
-## NEW IN 1.0.23
+## change-log
 
-A RPC-stack to exchange messages with the server much the same way as messages are send within **T** itself. Thus allowing for server-side **T** usage.
+- `1.0.27` Test coverage and refinements for RPC-stack. Readme section "object-oriented-design and functional decomposition".
+
+- `1.0.23` RPC-stack to exchange messages with a server much the same way as messages are send within **T** itself. Thus allowing for server-side **T** usage.
 
 ## example- and starter-project *teth-todo*
 
@@ -31,11 +33,41 @@ A RPC-stack to exchange messages with the server much the same way as messages a
 
 ## T
 
-A minimal functional set of enhancements to JavaScript forming a domain specific language: **T** is functional, messaging provides robustness, entry conditions minimize need for conditionals and raise expressiveness.
+A minimal functional set of enhancements to JavaScript forming a domain specific language: **T** is functional, messaging provides robustness, entry conditions minimise need for conditionals and raise expressiveness.
 
-##### compatible
+### compatible
 
 Any JavaScript library can be used from T. Calling into T from JavaScript is the same as sending messages inside pure T.
+
+### object-oriented-design and functional decomposition
+
+**T** and **teth** achieve object-oriented-design and functional decomposition through alternative means, [for significant reasons.](WHY.md) The following enumeration represent a translation table:
+
+#### 1. classes
+
+1. To achieve separation of concerns use [computational contexts.](#context)
+2. Model your "internal state" as part of [the central state tree.](#cestre)
+3. The notion of "types" is redundant in **T**.
+
+#### 2. inheritance
+
+1. **T** is purely functional.
+2. Logic is expressed as [functions with entry conditions.](#define)
+3. Logic is grouped by [computational contexts](#context) and not scattered throughout inheritance trees.
+
+#### 3. calling a method/function
+
+1. In **T** the basic means of communicating is ["sending messages."](#send-invoke)
+2. [Messages are JavaScript object literals](#send-invoke) that express intent to act.
+3. **T** functions are expressed as [entry condition (pattern) and handler function](#define).
+4. [Entry conditions](#define) explicitly check for a specific message-state that has to be fulfilled for the function to be invoked.
+
+#### 4. mutating instance-state
+
+1. All state in **teth** is [modelled via the central state tree.](#initialise-state-tree)
+2. The intent to retrieve & mutate state variables [is expressed explicitly as T middleware.](#retrieve-and-mutate-state-models)
+
+All those points taken together have profound positive effects on speed of development, accuracy of abstraction and robustness of resulting application.
 
 ### define(...)
 

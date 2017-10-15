@@ -51,7 +51,7 @@ function transportLevelErrorChecker (pathRestriction) {
       responder.fail(415, {
         code: 'WRONG_CONTENT_TYPE',
         message: 'TETH/RPC: Wrong header content type, expected "application/json"',
-        data: request.headers['Content-Type']
+        data: request.headers['content-type']
       })
       return true
     }
@@ -90,7 +90,7 @@ function handleRpcRequest (responder, dataString) {
       code: 'ERROR_PARSING_REQUEST',
       message: 'TETH/RPC: Request could not be parsed',
       error: error.toString(),
-      data: rpcReqLiteral
+      data: dataString
     })
   }
   if ((rpcReqLiteral['teth/rpc'] !== '1.0') ||

@@ -8,8 +8,8 @@ Library for application development: minimalist, functional, reactive, pattern m
 
 ## change-log
 
+- `1.0.29` Updated teth-pipe version.
 - `1.0.27` Test coverage and refinements for RPC-stack. Readme section "object-oriented-design and functional decomposition".
-
 - `1.0.23` RPC-stack to exchange messages with a server much the same way as messages are send within **T** itself. Thus allowing for server-side **T** usage.
 
 ## example- and starter-project *teth-todo*

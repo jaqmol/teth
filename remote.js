@@ -50,7 +50,7 @@ function remote (...args) {
         }
       }
       handler.send(JSON.stringify(request))
-    })
+    }).then(result => result)
   })
 }
 remote.init = remoteValetUrl => {

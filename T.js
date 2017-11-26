@@ -62,7 +62,7 @@ function match (matchLiteral) {
       else {
         raise(
           'No match found for',
-          JSON.stringify(literal),
+          literal,
           'in this context',
           -2)
       }

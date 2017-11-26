@@ -1,35 +1,13 @@
 /* Copyright 2017 Ronny Reichmann */
 /* global test expect */
 
-const route = require('./route')
-const { define } = require('./T')
+const { define, context } = require('./T')
 const cestre = require('./cestre')
-const testOrigin = 'http://some.origin.com'
-
-function composeMockWindow () {
-  const allListeners = {
-    load: [],
-    hashchange: []
-  }
-  function addEventListener (eventName, callback) {
-    allListeners[eventName].push(callback)
-  }
-  const location = {}
-  function changeHrefAndFireHashChange (hrefValue) {
-    location.href = hrefValue
-    allListeners['hashchange'].forEach(callback => callback())
-  }
-  function changeOrigin (originValue) {
-    location.origin = originValue
-  }
-  return Object.freeze({ addEventListener, location, changeHrefAndFireHashChange, changeOrigin })
-}
-
-const mockWindow = composeMockWindow()
-define('type: teth-globals, retrieve: window-object', () => mockWindow)
+const route = require('./route')
+const routeCtx = context('teth-route-private')
+const pattern = { type: 'route-private', event: 'change' }
 
 test('route without variables', done => {
-  mockWindow.changeOrigin(testOrigin)
   const patternShowAllItems = {'change-route': 'show-all-items'}
   const patternShowActiveItems = {'change-route': 'show-active-items'}
   const patternShowCompleteItems = {'change-route': 'show-completed-items'}
@@ -52,13 +30,12 @@ test('route without variables', done => {
     receptionCount += 1
     if (receptionCount === 3) done()
   })
-  mockWindow.changeHrefAndFireHashChange(testOrigin + '/#')
-  mockWindow.changeHrefAndFireHashChange(testOrigin + '/#/active')
-  mockWindow.changeHrefAndFireHashChange(testOrigin + '/#/completed')
+  routeCtx.circular(Object.assign({ path: '/#' }, pattern))
+  routeCtx.circular(Object.assign({ path: '/#/active' }, pattern))
+  routeCtx.circular(Object.assign({ path: '/#/completed' }, pattern))
 })
 
 test('route with variables', done => {
-  mockWindow.changeOrigin(testOrigin)
   const patternShowRootItems = {'change-route': 'show-root-items'}
   const patternActivateItem = {'change-route': 'activate-item'}
   const patternCompleteItem = {'change-route': 'complete-item'}
@@ -81,13 +58,12 @@ test('route with variables', done => {
     receptionCount += 1
     if (receptionCount === 3) done()
   })
-  mockWindow.changeHrefAndFireHashChange(testOrigin + '/#')
-  mockWindow.changeHrefAndFireHashChange(testOrigin + '/#/activate/111')
-  mockWindow.changeHrefAndFireHashChange(testOrigin + '/#/complete/222')
+  routeCtx.circular(Object.assign({ path: '/#' }, pattern))
+  routeCtx.circular(Object.assign({ path: '/#/activate/111' }, pattern))
+  routeCtx.circular(Object.assign({ path: '/#/complete/222' }, pattern))
 })
 
 test('route change with several listeners', done => {
-  mockWindow.changeOrigin(testOrigin)
   const ignorePattern = 'type: ignored-route'
   const listenerPattern = {'change-route': 'inform-about'}
   const root = route('/#', 'type: ignored-route')
@@ -111,15 +87,14 @@ test('route change with several listeners', done => {
     receptionCount += 1
     if (receptionCount === 9) done()
   })
-  mockWindow.changeHrefAndFireHashChange(testOrigin + `/#/inform/${factor * value}`)
+  routeCtx.circular(Object.assign({ path: `/#/inform/${factor * value}` }, pattern))
   factor += 1
-  mockWindow.changeHrefAndFireHashChange(testOrigin + `/#/inform/${factor * value}`)
+  routeCtx.circular(Object.assign({ path: `/#/inform/${factor * value}` }, pattern))
   factor += 1
-  mockWindow.changeHrefAndFireHashChange(testOrigin + `/#/inform/${factor * value}`)
+  routeCtx.circular(Object.assign({ path: `/#/inform/${factor * value}` }, pattern))
 })
 
 test('route with state mutation', done => {
-  mockWindow.changeOrigin(testOrigin)
   cestre.init({ activeRoute: 'init' })
   const state = cestre()
   const mutateRoute = state.mutate('activeRoute')
@@ -134,12 +109,12 @@ test('route with state mutation', done => {
     if (finish) done()
   })
   expectedRoute = 'all'
-  mockWindow.changeHrefAndFireHashChange(testOrigin + '/#')
+  routeCtx.circular(Object.assign({ path: '/#' }, pattern))
   expectedRoute = 'active'
-  mockWindow.changeHrefAndFireHashChange(testOrigin + '/#/active')
+  routeCtx.circular(Object.assign({ path: '/#/active' }, pattern))
   expectedRoute = 'completed'
-  mockWindow.changeHrefAndFireHashChange(testOrigin + '/#/completed')
+  routeCtx.circular(Object.assign({ path: '/#/completed' }, pattern))
   expectedRoute = { show: '777' }
   finish = true
-  mockWindow.changeHrefAndFireHashChange(testOrigin + '/#/show/777')
+  routeCtx.circular(Object.assign({ path: '/#/show/777' }, pattern))
 })

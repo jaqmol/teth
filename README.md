@@ -6,15 +6,11 @@ Library for application development: minimalist, functional, reactive, pattern m
 
 [Learn about the reasons behind Teth.](WHY.md)
 
-## change-log
-
-- `1.0.29` Updated teth-pipe version.
-- `1.0.27` Test coverage and refinements for RPC-stack. Readme section "object-oriented-design and functional decomposition".
-- `1.0.23` RPC-stack to exchange messages with a server much the same way as messages are send within **T** itself. Thus allowing for server-side **T** usage.
-
 ## example- and starter-project *teth-todo*
 
 [Todo app implemented in teth and T.](https://github.com/jaqmol/teth-todo) Provides a best practice example of how to structure an app with teth.
+
+[Todo in teth and T, structured using actions and reducers.](https://github.com/jaqmol/teth-todo-actions-and-reducers) It's quite simple to use Teth like you would do with React and Redux.
 
 ## TOC
 

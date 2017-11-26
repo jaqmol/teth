@@ -1,10 +1,10 @@
 {
   "name": "teth",
-  "version": "1.0.35",
+  "version": "1.0.39",
   "description": "Functional, reactive, pattern matching based, centralized state tree, open source JS library.",
   "main": "init.js",
   "scripts": {
-    "test": "jest --runInBand route.test.js",
+    "test": "jest --runInBand",
     "doc": "jsdoc *.js -d reference",
     "test-resonate": "node bundle.js ./resonate.test-main.js --out ./build-test"
   },
